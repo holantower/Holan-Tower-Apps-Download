@@ -26,13 +26,14 @@ import {
   Phone,
   Wrench,
   Calendar,
-  ArrowUp
+  ArrowUp,
+  MapPin,
+  Calculator
 } from 'lucide-react';
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [installCount, setInstallCount] = useState(0);
   const { scrollYProgress } = useScroll();
   const showFloatingBtn = useTransform(scrollYProgress, [0, 0.2], [false, true]);
   const [showBtn, setShowBtn] = useState(false);
@@ -53,36 +54,17 @@ export default function App() {
     }
   }, [darkMode]);
 
-  // Install Counter Animation
-  useEffect(() => {
-    let start = 0;
-    const end = 500;
-    const duration = 2000;
-    const increment = end / (duration / 16);
-    
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= end) {
-        setInstallCount(end);
-        clearInterval(timer);
-      } else {
-        setInstallCount(Math.floor(start));
-      }
-    }, 16);
-
-    return () => clearInterval(timer);
-  }, []);
-
   const toggleTheme = () => setDarkMode(!darkMode);
 
   const features = [
-    { icon: <CreditCard className="w-6 h-6" />, title: "সার্ভিস চার্জ পরিশোধ", desc: "বিকাশ বা নগদের মাধ্যমে খুব সহজেই মাসিক সার্ভিস চার্জ পরিশোধ করুন।" },
-    { icon: <Zap className="w-6 h-6" />, title: "মিটার রিচার্জ", desc: "প্রিপেইড মিটার রিচার্জ করুন ঘরে বসেই, কোনো ঝামেলা ছাড়াই।" },
-    { icon: <Phone className="w-6 h-6" />, title: "জরুরি নম্বর তালিকা", desc: "পুলিশ, ফায়ার সার্ভিস ও অ্যাম্বুলেন্সের নম্বর হাতের কাছেই।" },
+    { icon: <CreditCard className="w-6 h-6" />, title: "সার্ভিস চার্জ পরিশোধ", desc: "বর্তমানে তত্ত্বাবধানে থাকা ব্যক্তির কাছে সার্ভিস চার্জ পরিশোধ করা হচ্ছে। বিকাশ বা নগদের মাধ্যমে খুব শীঘ্রই মাসিক সার্ভিস চার্জ পরিশোধ করার প্রক্রিয়া চালু হবে।" },
+    { icon: <Zap className="w-6 h-6" />, title: "মিটার রিচার্জ", desc: "আমাদের অ্যাপের মাধ্যমে ডেসকো প্রিপেইড মিটার রিচার্জ করুন ঘরে বসেই Ekpay মাধ্যমে, কোনো ঝামেলা ছাড়াই। (পেমেন্ট অপশন: বিকাশ, নগদ, উপায়, রকেট ও ব্যাংকের মাধ্যমে)" },
+    { icon: <Calculator className="w-6 h-6" />, title: "আয় ব্যয় হিসাব", desc: "বিল্ডিংয়ের সকল আয়-ব্যয়ের হিসাব স্বচ্ছভাবে সংরক্ষণ ও প্রদর্শন করা হয়।" },
+    { icon: <Phone className="w-6 h-6" />, title: "জরুরি নম্বর তালিকা", desc: "বিল্ডিং সম্পর্কিত সকলের জরুরি নাম্বার হাতের কাছেই।" },
     { icon: <Bell className="w-6 h-6" />, title: "বিল্ডিং নোটিশ বোর্ড", desc: "বিল্ডিংয়ের যেকোনো জরুরি নোটিশ বা ঘোষণা সাথে সাথে জানুন।" },
-    { icon: <ArrowUp className="w-6 h-6" />, title: "লিফট নির্দেশনা", desc: "লিফট মেইনটেন্যান্স বা সমস্যার আপডেট রিয়েল-টাইমে দেখুন।" },
-    { icon: <Wrench className="w-6 h-6" />, title: "মেইনটেন্যান্স আপডেট", desc: "পানির পাম্প বা জেনারেটর মেরামতের খবর আগে থেকেই জানুন।" },
-    { icon: <Shield className="w-6 h-6" />, title: "নিরাপত্তা তথ্য", desc: "ভিজিটর লগ এবং সিসিটিভি মনিটরিংয়ের তথ্য দেখুন।" },
+    { icon: <ArrowUp className="w-6 h-6" />, title: "লিফট নির্দেশনা", desc: "লিফট মেইনটেন্যান্স বা সমস্যার আপডেট রিয়েল-টাইমে দেখুন।" },
+    { icon: <Wrench className="w-6 h-6" />, title: "মেইনটেন্যান্স আপডেট", desc: "পানির পাম্প বা যে কোনো ইলেকট্রিক মেরামতের খবর আগে থেকেই জানুন।" },
+    { icon: <Shield className="w-6 h-6" />, title: "নিরাপত্তা তথ্য", desc: "নিরাপত্তার জন্য সর্বক্ষণিক গার্ডের ব্যবস্থা।" },
     { icon: <Calendar className="w-6 h-6" />, title: "ইভেন্ট ঘোষণা", desc: "কমিউনিটি ইভেন্ট বা মিটিংয়ের সময়সূচি জেনে নিন।" }
   ];
 
@@ -105,15 +87,16 @@ export default function App() {
       
       {/* Navigation */}
       <nav className={`fixed w-full z-50 transition-all duration-300 ${darkMode ? 'bg-slate-900/80 border-b border-slate-800' : 'bg-white/80 border-b border-slate-200'} backdrop-blur-xl`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-5 lg:px-6">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
-                <Building2 size={24} />
-              </div>
+              <img src="https://i.imghippo.com/files/xPV6164w.png" alt="Logo" className="w-12 h-12 object-contain" />
               <div>
-                <span className="font-bold text-xl tracking-tight block leading-none">হোলান টাওয়ার</span>
-                <span className={`text-xs font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>রেসিডেন্ট অ্যাপ</span>
+                <span className="font-bold text-xl tracking-tight block leading-none">হলান টাওয়ার</span>
+                <div className={`flex items-center gap-1 text-xs font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                  <MapPin size={12} />
+                  <span>হলান, দক্ষিণখান</span>
+                </div>
               </div>
             </div>
 
@@ -193,18 +176,13 @@ export default function App() {
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="text-center lg:text-left"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-sm font-bold mb-8 border border-emerald-200 dark:border-emerald-800/50">
-                <Star size={14} className="fill-current" />
-                <span>রেটিং ৪.৯/৫.০</span>
-              </div>
-              
               <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6 tracking-tight">
                 আপনার বিল্ডিং ব্যবস্থাপনা <br/>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-blue-600">এখন হাতের মুঠোয়</span>
               </h1>
               
               <p className={`text-lg lg:text-xl mb-10 leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-                হোলান টাওয়ার রেসিডেন্ট অ্যাপের মাধ্যমে সার্ভিস চার্জ পরিশোধ, নোটিশ দেখা এবং মেইনটেন্যান্স আপডেট পাওয়া এখন আরও সহজ ও নিরাপদ।
+                হলান টাওয়ার অ্যাপের মাধ্যমে সার্ভিস চার্জ পরিশোধ, নোটিশ দেখা এবং মেইনটেন্যান্স আপডেট পাওয়া এখন আরও সহজ ও নিরাপদ।
               </p>
               
               <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
@@ -213,26 +191,10 @@ export default function App() {
                   <Download size={24} />
                   <span className="font-bold text-lg">এখনই ডাউনলোড করুন</span>
                 </button>
-                <button className={`flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all border ${darkMode ? 'border-slate-700 hover:bg-slate-800 text-slate-300' : 'border-slate-200 hover:bg-white text-slate-700'} shadow-sm hover:shadow-md`}>
-                  <HelpCircle size={20} />
-                  <span>বিস্তারিত জানুন</span>
-                </button>
-              </div>
-
-              <div className="mt-10 flex items-center justify-center lg:justify-start gap-6">
-                <div className="text-left">
-                  <p className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-blue-600">
-                    {installCount}+
-                  </p>
-                  <p className={`text-sm font-medium ${darkMode ? 'text-slate-500' : 'text-slate-500'}`}>রেসিডেন্ট ইন্সটল করেছেন</p>
-                </div>
-                <div className={`h-10 w-px ${darkMode ? 'bg-slate-800' : 'bg-slate-200'}`}></div>
-                <div className="text-left">
-                  <p className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-blue-600">
-                    ২৪/৭
-                  </p>
-                  <p className={`text-sm font-medium ${darkMode ? 'text-slate-500' : 'text-slate-500'}`}>সাপোর্ট সুবিধা</p>
-                </div>
+                <a href="https://holan-tower-apps.vercel.app/" target="_blank" rel="noopener noreferrer" className={`flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all border ${darkMode ? 'border-slate-700 hover:bg-slate-800 text-slate-300' : 'border-slate-200 hover:bg-white text-slate-700'} shadow-sm hover:shadow-md`}>
+                  <Globe size={20} />
+                  <span>ওয়েব ভার্সন</span>
+                </a>
               </div>
             </motion.div>
 
@@ -313,7 +275,7 @@ export default function App() {
             <span className="text-emerald-500 font-bold tracking-wider uppercase text-sm">ফিচারসমূহ</span>
             <h2 className="text-3xl md:text-4xl font-bold mt-3 mb-6">বিল্ডিং ম্যানেজমেন্ট এখন আরও সহজ</h2>
             <p className={`text-lg ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-              হোলান টাওয়ার অ্যাপের মাধ্যমে আপনার দৈনন্দিন জীবনের সকল কাজ এখন এক ক্লিকেই সম্ভব।
+              হলান টাওয়ার অ্যাপের মাধ্যমে আপনার দৈনন্দিন জীবনের সকল কাজ এখন এক ক্লিকেই সম্ভব।
             </p>
           </div>
 
@@ -451,7 +413,7 @@ export default function App() {
                     <Building2 size={32} />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold">হোলান টাওয়ার অ্যাপ</h3>
+                    <h3 className="text-2xl font-bold">হলান টাওয়ার অ্যাপ</h3>
                     <p className="text-emerald-500 font-medium">অফিসিয়াল ভার্সন</p>
                   </div>
                 </div>
@@ -467,7 +429,7 @@ export default function App() {
                   </div>
                   <div className={`flex justify-between py-3 border-b ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
                     <span className={`${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>ডেভেলপার</span>
-                    <span className="font-bold">হোলান টেক</span>
+                    <span className="font-bold">হলান টেক</span>
                   </div>
                   <div className={`flex justify-between py-3 border-b ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
                     <span className={`${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>আপডেট তারিখ</span>
@@ -531,7 +493,7 @@ export default function App() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center text-white">
           <h2 className="text-4xl md:text-5xl font-bold mb-8 leading-tight">আজই যুক্ত হোন আমাদের ডিজিটাল কমিউনিটিতে</h2>
           <p className="text-xl text-emerald-100 mb-12 max-w-2xl mx-auto">
-            আপনার জীবনযাত্রাকে আরও সহজ, নিরাপদ এবং আধুনিক করতে হোলান টাওয়ার অ্যাপটি আজই ডাউনলোড করুন।
+            আপনার জীবনযাত্রাকে আরও সহজ, নিরাপদ এবং আধুনিক করতে হলান টাওয়ার অ্যাপটি আজই ডাউনলোড করুন।
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
@@ -559,10 +521,8 @@ export default function App() {
           <div className="grid md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center gap-3 mb-6 text-white">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-blue-600 flex items-center justify-center font-bold text-xl">
-                  <Building2 size={24} />
-                </div>
-                <span className="font-bold text-2xl tracking-tight">হোলান টাওয়ার</span>
+                <img src="https://i.imghippo.com/files/xPV6164w.png" alt="Logo" className="w-12 h-12 object-contain" />
+                <span className="font-bold text-2xl tracking-tight">হলান টাওয়ার</span>
               </div>
               <p className="mb-8 max-w-sm leading-relaxed">
                 আধুনিক আবাসন ব্যবস্থাপনার এক অনন্য উদাহরণ। আমরা নিশ্চিত করি সর্বোচ্চ নিরাপত্তা এবং নাগরিক সুবিধা।
@@ -603,14 +563,14 @@ export default function App() {
                 </li>
                 <li className="flex items-start gap-3">
                   <Building2 size={18} className="text-emerald-500 mt-1" />
-                  <span>হোলান টাওয়ার, ঢাকা-১২৩০</span>
+                  <span>হলান টাওয়ার, ঢাকা-১২৩০</span>
                 </li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p>© ২০২৬ হোলান টাওয়ার। সর্বস্বত্ব সংরক্ষিত।</p>
+            <p>© ২০২৬ হলান টাওয়ার। সর্বস্বত্ব সংরক্ষিত।</p>
             <div className="flex gap-8 text-sm">
               <a href="#" className="hover:text-white transition-colors">প্রাইভেসি পলিসি</a>
               <a href="#" className="hover:text-white transition-colors">শর্তাবলী</a>
