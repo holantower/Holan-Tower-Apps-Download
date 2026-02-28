@@ -113,7 +113,9 @@ export default function App() {
                 {darkMode ? <Sun size={20} /> : <Moon size={20} />}
               </button>
               <a 
-                href="#download"
+                href="https://github.com/rifathasan1970r/Holantower-apps-download/raw/refs/heads/main/HolanTower.apk"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="px-6 py-2.5 rounded-full bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white font-medium transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/40 hover:-translate-y-0.5"
               >
                 ডাউনলোড
@@ -149,7 +151,7 @@ export default function App() {
                 <a href="#screenshots" onClick={() => setIsMenuOpen(false)} className="font-medium py-2 border-b border-slate-100 dark:border-slate-800">স্ক্রিনশট</a>
                 <a href="#install" onClick={() => setIsMenuOpen(false)} className="font-medium py-2 border-b border-slate-100 dark:border-slate-800">ইন্সটল গাইড</a>
                 <a href="#faq" onClick={() => setIsMenuOpen(false)} className="font-medium py-2 border-b border-slate-100 dark:border-slate-800">FAQ</a>
-                <a href="#download" onClick={() => setIsMenuOpen(false)} className="text-center px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-blue-600 text-white font-medium shadow-lg">
+                <a href="https://github.com/rifathasan1970r/Holantower-apps-download/raw/refs/heads/main/HolanTower.apk" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="text-center px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-blue-600 text-white font-medium shadow-lg">
                   ডাউনলোড করুন
                 </a>
               </div>
@@ -186,11 +188,11 @@ export default function App() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
-                <button className="group relative flex items-center justify-center gap-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-8 py-4 rounded-2xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 overflow-hidden">
+                <a href="https://github.com/rifathasan1970r/Holantower-apps-download/raw/refs/heads/main/HolanTower.apk" target="_blank" rel="noopener noreferrer" className="group relative flex items-center justify-center gap-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-8 py-4 rounded-2xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <Download size={24} />
                   <span className="font-bold text-lg">এখনই ডাউনলোড করুন</span>
-                </button>
+                </a>
                 <a href="https://holan-tower-apps.vercel.app/" target="_blank" rel="noopener noreferrer" className={`flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all border ${darkMode ? 'border-slate-700 hover:bg-slate-800 text-slate-300' : 'border-slate-200 hover:bg-white text-slate-700'} shadow-sm hover:shadow-md`}>
                   <Globe size={20} />
                   <span>ওয়েব ভার্সন</span>
@@ -209,7 +211,7 @@ export default function App() {
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-36 h-7 bg-slate-800 rounded-b-2xl z-20"></div>
                 <div className="w-full h-full bg-slate-800 relative group">
                   <img 
-                    src="https://picsum.photos/seed/buildingapp/600/1200" 
+                    src="https://i.imghippo.com/files/KbLJ8581V.jpg" 
                     alt="App Interface" 
                     className="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105"
                   />
@@ -442,10 +444,10 @@ export default function App() {
                 </div>
 
                 <div className="mt-10">
-                  <button className="w-full py-4 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-lg transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xl flex items-center justify-center gap-3">
+                  <a href="https://github.com/rifathasan1970r/Holantower-apps-download/raw/refs/heads/main/HolanTower.apk" target="_blank" rel="noopener noreferrer" className="w-full py-4 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-lg transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xl flex items-center justify-center gap-3">
                     <Download size={22} />
                     সরাসরি ডাউনলোড করুন
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
@@ -497,11 +499,11 @@ export default function App() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <button className="relative group bg-white text-emerald-700 px-10 py-5 rounded-2xl font-bold text-xl hover:bg-emerald-50 transition-all shadow-2xl hover:shadow-white/20 hover:-translate-y-1 flex items-center justify-center gap-3 w-full sm:w-auto overflow-hidden">
+            <a href="https://github.com/rifathasan1970r/Holantower-apps-download/raw/refs/heads/main/HolanTower.apk" target="_blank" rel="noopener noreferrer" className="relative group bg-white text-emerald-700 px-10 py-5 rounded-2xl font-bold text-xl hover:bg-emerald-50 transition-all shadow-2xl hover:shadow-white/20 hover:-translate-y-1 flex items-center justify-center gap-3 w-full sm:w-auto overflow-hidden">
               <span className="absolute w-full h-full bg-emerald-100/50 scale-0 group-hover:scale-150 transition-transform duration-500 rounded-full"></span>
               <Download size={24} className="relative z-10" />
               <span className="relative z-10">ডাউনলোড করুন</span>
-            </button>
+            </a>
             <button className="bg-transparent border-2 border-white/30 text-white px-10 py-5 rounded-2xl font-bold text-xl hover:bg-white/10 transition-all flex items-center justify-center gap-3 w-full sm:w-auto backdrop-blur-sm">
               <HelpCircle size={24} />
               <span>সাপোর্ট</span>
@@ -584,7 +586,9 @@ export default function App() {
       <AnimatePresence>
         {showBtn && (
           <motion.a
-            href="#download"
+            href="https://github.com/rifathasan1970r/Holantower-apps-download/raw/refs/heads/main/HolanTower.apk"
+            target="_blank"
+            rel="noopener noreferrer"
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
