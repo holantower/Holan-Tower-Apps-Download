@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, FormEvent, ReactNode } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { 
   Download, 
@@ -28,15 +28,92 @@ import {
   Calendar,
   ArrowUp,
   MapPin,
-  Calculator
+  Calculator,
+  Lock,
+  Plus,
+  Trash2,
+  ImagePlus,
+  Save
 } from 'lucide-react';
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
   const { scrollYProgress } = useScroll();
   const showFloatingBtn = useTransform(scrollYProgress, [0, 0.2], [false, true]);
   const [showBtn, setShowBtn] = useState(false);
+
+  // Content State
+  const [content, setContent] = useState({
+    buildingName: "হলান টাওয়ার",
+    location: "হলান, দক্ষিণখান",
+    logoUrl: "https://i.imghippo.com/files/xPV6164w.png",
+    heroTitle1: "আপনার বিল্ডিং ব্যবস্থাপনা",
+    heroTitle2: "এখন হাতের মুঠোয়",
+    heroSubtitle: "হলান টাওয়ার অ্যাপের মাধ্যমে সার্ভিস চার্জ পরিশোধ, নোটিশ দেখা এবং মেইনটেন্যান্স আপডেট পাওয়া এখন আরও সহজ ও নিরাপদ।",
+    heroImageUrl: "https://i.imghippo.com/files/KbLJ8581V.jpg",
+    features: [
+      { icon: "CreditCard", title: "সার্ভিস চার্জ পরিশোধ", desc: "বর্তমানে তত্ত্বাবধানে থাকা ব্যক্তির কাছে সার্ভিস চার্জ পরিশোধ করা হচ্ছে। বিকাশ বা নগদের মাধ্যমে খুব শীঘ্রই মাসিক সার্ভিস চার্জ পরিশোধ করার প্রক্রিয়া চালু হবে।" },
+      { icon: "Zap", title: "মিটার রিচার্জ", desc: "আমাদের অ্যাপের মাধ্যমে ডেসকো প্রিপেইড মিটার রিচার্জ করুন ঘরে বসেই Ekpay মাধ্যমে, কোনো ঝামেলা ছাড়াই। (পেমেন্ট অপশন: বিকাশ, নগদ, উপায়, রকেট ও ব্যাংকের মাধ্যমে)" },
+      { icon: "Calculator", title: "আয় ব্যয় হিসাব", desc: "বিল্ডিংয়ের সকল আয়-ব্যয়ের হিসাব স্বচ্ছভাবে সংরক্ষণ ও প্রদর্শন করা হয়।" },
+      { icon: "Phone", title: "জরুরি নম্বর তালিকা", desc: "বিল্ডিং সম্পর্কিত সকলের জরুরি নাম্বার হাতের কাছেই।" },
+      { icon: "Bell", title: "বিল্ডিং নোটিশ বোর্ড", desc: "বিল্ডিংয়ের যেকোনো জরুরি নোটিশ বা ঘোষণা সাথে সাথে জানুন।" },
+      { icon: "ArrowUp", title: "লিফট নির্দেশনা", desc: "লিফট মেইনটেন্যান্স বা সমস্যার আপডেট রিয়েল-টাইমে দেখুন।" },
+      { icon: "Wrench", title: "মেইনটেন্যান্স আপডেট", desc: "পানির পাম্প বা যে কোনো ইলেকট্রিক মেরামতের খবর আগে থেকেই জানুন।" },
+      { icon: "Shield", title: "নিরাপত্তা তথ্য", desc: "নিরাপত্তার জন্য সর্বক্ষণিক গার্ডের ব্যবস্থা।" },
+      { icon: "Calendar", title: "ইভেন্ট ঘোষণা", desc: "কমিউনিটি ইভেন্ট বা মিটিংয়ের সময়সূচি জেনে নিন।" }
+    ],
+    installSteps: [
+      { step: "০১", title: "ডাউনলোড বাটনে ক্লিক করুন", desc: "নিচের ডাউনলোড বাটনে ক্লিক করে অ্যাপটি ডাউনলোড শুরু করুন", imageUrl: "https://picsum.photos/seed/step0/400/300" },
+      { step: "০২", title: "ফাইল ওপেন করে Install চাপুন", desc: "ডাউনলোড শেষ হলে নোটিফিকেশন বার থেকে ফাইলটি ওপেন করুন", imageUrl: "https://picsum.photos/seed/step1/400/300" },
+      { step: "০৩", title: "Unknown Sources Allow করুন", desc: "যদি পারমিশন চায়, তবে সেটিংস থেকে 'Allow' করে দিন", imageUrl: "https://picsum.photos/seed/step2/400/300" },
+      { step: "০৪", title: "অ্যাপ ওপেন করে লগইন করুন", desc: "আপনার ফ্ল্যাট নম্বর দিয়ে রেজিস্ট্রেশন সম্পন্ন করুন", imageUrl: "https://picsum.photos/seed/step3/400/300" }
+    ],
+    faqs: [
+      { q: "অ্যাপ কিভাবে ডাউনলোড করবো?", a: "আমাদের ওয়েবসাইটের 'ডাউনলোড' বাটনে ক্লিক করলেই অ্যাপটি ডাউনলোড শুরু হবে।" },
+      { q: "লগইন সমস্যা হলে কি করবো?", a: "লগইন করতে সমস্যা হলে বিল্ডিং ম্যানেজারের সাথে যোগাযোগ করুন অথবা সাপোর্ট নম্বরে কল করুন।" },
+      { q: "আপডেট কিভাবে পাবো?", a: "অ্যাপের মধ্যেই আপডেটের নোটিফিকেশন পাবেন। সেখান থেকে এক ক্লিকেই আপডেট করা যাবে।" },
+      { q: "আইফোনে কি ব্যবহার করা যাবে?", a: "বর্তমানে এটি শুধুমাত্র অ্যান্ড্রয়েড ব্যবহারকারীদের জন্য। আইওএস ভার্সন শীঘ্রই আসছে।" }
+    ],
+    appDetails: {
+      version: "১.০.০",
+      size: "১৫ মেগাবাইট",
+      developer: "হলান টেক",
+      updateDate: "২৪ ফেব্রুয়ারি ২০২৬",
+      requirement: "Android 8.0+"
+    },
+    footerDesc: "আধুনিক আবাসন ব্যবস্থাপনার এক অনন্য উদাহরণ। আমরা নিশ্চিত করি সর্বোচ্চ নিরাপত্তা এবং নাগরিক সুবিধা।"
+  });
+
+  const iconMap: Record<string, ReactNode> = {
+    CreditCard: <CreditCard className="w-6 h-6" />,
+    Zap: <Zap className="w-6 h-6" />,
+    Calculator: <Calculator className="w-6 h-6" />,
+    Phone: <Phone className="w-6 h-6" />,
+    Bell: <Bell className="w-6 h-6" />,
+    ArrowUp: <ArrowUp className="w-6 h-6" />,
+    Wrench: <Wrench className="w-6 h-6" />,
+    Shield: <Shield className="w-6 h-6" />,
+    Calendar: <Calendar className="w-6 h-6" />
+  };
+
+  const updateContent = (path: string, value: any) => {
+    const keys = path.split('.');
+    setContent(prev => {
+      const newContent = { ...prev };
+      let current: any = newContent;
+      for (let i = 0; i < keys.length - 1; i++) {
+        current = current[keys[i]];
+      }
+      current[keys[keys.length - 1]] = value;
+      return newContent;
+    });
+  };
 
   useEffect(() => {
     const unsubscribe = showFloatingBtn.on("change", (latest) => {
@@ -56,31 +133,53 @@ export default function App() {
 
   const toggleTheme = () => setDarkMode(!darkMode);
 
-  const features = [
-    { icon: <CreditCard className="w-6 h-6" />, title: "সার্ভিস চার্জ পরিশোধ", desc: "বর্তমানে তত্ত্বাবধানে থাকা ব্যক্তির কাছে সার্ভিস চার্জ পরিশোধ করা হচ্ছে। বিকাশ বা নগদের মাধ্যমে খুব শীঘ্রই মাসিক সার্ভিস চার্জ পরিশোধ করার প্রক্রিয়া চালু হবে।" },
-    { icon: <Zap className="w-6 h-6" />, title: "মিটার রিচার্জ", desc: "আমাদের অ্যাপের মাধ্যমে ডেসকো প্রিপেইড মিটার রিচার্জ করুন ঘরে বসেই Ekpay মাধ্যমে, কোনো ঝামেলা ছাড়াই। (পেমেন্ট অপশন: বিকাশ, নগদ, উপায়, রকেট ও ব্যাংকের মাধ্যমে)" },
-    { icon: <Calculator className="w-6 h-6" />, title: "আয় ব্যয় হিসাব", desc: "বিল্ডিংয়ের সকল আয়-ব্যয়ের হিসাব স্বচ্ছভাবে সংরক্ষণ ও প্রদর্শন করা হয়।" },
-    { icon: <Phone className="w-6 h-6" />, title: "জরুরি নম্বর তালিকা", desc: "বিল্ডিং সম্পর্কিত সকলের জরুরি নাম্বার হাতের কাছেই।" },
-    { icon: <Bell className="w-6 h-6" />, title: "বিল্ডিং নোটিশ বোর্ড", desc: "বিল্ডিংয়ের যেকোনো জরুরি নোটিশ বা ঘোষণা সাথে সাথে জানুন।" },
-    { icon: <ArrowUp className="w-6 h-6" />, title: "লিফট নির্দেশনা", desc: "লিফট মেইনটেন্যান্স বা সমস্যার আপডেট রিয়েল-টাইমে দেখুন।" },
-    { icon: <Wrench className="w-6 h-6" />, title: "মেইনটেন্যান্স আপডেট", desc: "পানির পাম্প বা যে কোনো ইলেকট্রিক মেরামতের খবর আগে থেকেই জানুন।" },
-    { icon: <Shield className="w-6 h-6" />, title: "নিরাপত্তা তথ্য", desc: "নিরাপত্তার জন্য সর্বক্ষণিক গার্ডের ব্যবস্থা।" },
-    { icon: <Calendar className="w-6 h-6" />, title: "ইভেন্ট ঘোষণা", desc: "কমিউনিটি ইভেন্ট বা মিটিংয়ের সময়সূচি জেনে নিন।" }
-  ];
+  const handleAdminLogin = (e: FormEvent) => {
+    e.preventDefault();
+    if (password === '1966') {
+      setIsAdminLoggedIn(true);
+      setIsAdminModalOpen(false);
+      setLoginError('');
+      alert('এডমিন প্যানেলে স্বাগতম!');
+    } else {
+      setLoginError('ভুল পাসওয়ার্ড!');
+    }
+  };
 
-  const installSteps = [
-    { step: "০১", title: "ডাউনলোড বাটনে ক্লিক করুন", desc: "নিচের ডাউনলোড বাটনে ক্লিক করে অ্যাপটি ডাউনলোড শুরু করুন।" },
-    { step: "০২", title: "ফাইল ওপেন করে Install চাপুন", desc: "ডাউনলোড শেষ হলে নোটিফিকেশন বার থেকে ফাইলটি ওপেন করুন।" },
-    { step: "০৩", title: "Unknown Sources Allow করুন", desc: "যদি পারমিশন চায়, তবে সেটিংস থেকে 'Allow' করে দিন।" },
-    { step: "০৪", title: "অ্যাপ ওপেন করে লগইন করুন", desc: "আপনার ফ্ল্যাট নম্বর দিয়ে রেজিস্ট্রেশন সম্পন্ন করুন।" }
-  ];
+  const EditableText = ({ path, value, className, multiline = false }: { path: string, value: string, className?: string, multiline?: boolean }) => {
+    if (!isAdminLoggedIn) return <span className={className}>{value}</span>;
+    
+    return (
+      <span 
+        contentEditable 
+        suppressContentEditableWarning
+        onBlur={(e) => updateContent(path, e.currentTarget.textContent || "")}
+        className={`${className} outline-none focus:ring-2 focus:ring-emerald-500 rounded px-1 transition-all bg-emerald-500/5 min-w-[20px] inline-block`}
+      >
+        {value}
+      </span>
+    );
+  };
 
-  const faqs = [
-    { q: "অ্যাপ কিভাবে ডাউনলোড করবো?", a: "আমাদের ওয়েবসাইটের 'ডাউনলোড' বাটনে ক্লিক করলেই অ্যাপটি ডাউনলোড শুরু হবে।" },
-    { q: "লগইন সমস্যা হলে কি করবো?", a: "লগইন করতে সমস্যা হলে বিল্ডিং ম্যানেজারের সাথে যোগাযোগ করুন অথবা সাপোর্ট নম্বরে কল করুন।" },
-    { q: "আপডেট কিভাবে পাবো?", a: "অ্যাপের মধ্যেই আপডেটের নোটিফিকেশন পাবেন। সেখান থেকে এক ক্লিকেই আপডেট করা যাবে।" },
-    { q: "আইফোনে কি ব্যবহার করা যাবে?", a: "বর্তমানে এটি শুধুমাত্র অ্যান্ড্রয়েড ব্যবহারকারীদের জন্য। আইওএস ভার্সন শীঘ্রই আসছে।" }
-  ];
+  const EditableImage = ({ path, src, alt, className }: { path: string, src: string, alt: string, className?: string }) => {
+    if (!isAdminLoggedIn) return <img src={src} alt={alt} className={className} />;
+
+    return (
+      <div className="relative group/img">
+        <img src={src} alt={alt} className={className} />
+        <button 
+          onClick={() => {
+            const newUrl = prompt('নতুন ইমেজের URL দিন:', src);
+            if (newUrl) updateContent(path, newUrl);
+          }}
+          className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity rounded-inherit"
+        >
+          <div className="bg-white p-2 rounded-full text-slate-900">
+            <ImagePlus size={20} />
+          </div>
+        </button>
+      </div>
+    );
+  };
 
   return (
     <div className={`min-h-screen font-sans transition-colors duration-300 ${darkMode ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
@@ -90,12 +189,12 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-3 sm:px-5 lg:px-6">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center gap-3">
-              <img src="https://i.imghippo.com/files/xPV6164w.png" alt="Logo" className="w-12 h-12 object-contain" />
+              <EditableImage path="logoUrl" src={content.logoUrl} alt="Logo" className="w-12 h-12 object-contain" />
               <div>
-                <span className="font-bold text-xl tracking-tight block leading-none">হলান টাওয়ার</span>
+                <EditableText path="buildingName" value={content.buildingName} className="font-bold text-xl tracking-tight block leading-none" />
                 <div className={`flex items-center gap-1 text-xs font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                   <MapPin size={12} />
-                  <span>হলান, দক্ষিণখান</span>
+                  <EditableText path="location" value={content.location} />
                 </div>
               </div>
             </div>
@@ -106,6 +205,23 @@ export default function App() {
               <a href="#screenshots" className="hover:text-emerald-500 transition-colors font-medium">স্ক্রিনশট</a>
               <a href="#install" className="hover:text-emerald-500 transition-colors font-medium">ইন্সটল গাইড</a>
               <a href="#faq" className="hover:text-emerald-500 transition-colors font-medium">FAQ</a>
+              {isAdminLoggedIn ? (
+                <button 
+                  onClick={() => setIsAdminLoggedIn(false)}
+                  className="px-4 py-2 rounded-xl bg-red-500 text-white font-medium flex items-center gap-2"
+                >
+                  <Save size={16} />
+                  সেভ করুন
+                </button>
+              ) : (
+                <button 
+                  onClick={() => setIsAdminModalOpen(true)}
+                  className="hover:text-emerald-500 transition-colors font-medium flex items-center gap-1"
+                >
+                  <Lock size={16} />
+                  এডমিন প্যানেল
+                </button>
+              )}
               <button 
                 onClick={toggleTheme} 
                 className={`p-2.5 rounded-full transition-all ${darkMode ? 'bg-slate-800 hover:bg-slate-700 text-yellow-400' : 'bg-slate-100 hover:bg-slate-200 text-slate-600'}`}
@@ -151,6 +267,16 @@ export default function App() {
                 <a href="#screenshots" onClick={() => setIsMenuOpen(false)} className="font-medium py-2 border-b border-slate-100 dark:border-slate-800">স্ক্রিনশট</a>
                 <a href="#install" onClick={() => setIsMenuOpen(false)} className="font-medium py-2 border-b border-slate-100 dark:border-slate-800">ইন্সটল গাইড</a>
                 <a href="#faq" onClick={() => setIsMenuOpen(false)} className="font-medium py-2 border-b border-slate-100 dark:border-slate-800">FAQ</a>
+                <button 
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    setIsAdminModalOpen(true);
+                  }} 
+                  className="font-medium py-2 border-b border-slate-100 dark:border-slate-800 text-left flex items-center gap-2"
+                >
+                  <Lock size={16} />
+                  এডমিন প্যানেল
+                </button>
                 <a href="https://github.com/rifathasan1970r/Holantower-apps-download/raw/refs/heads/main/HolanTower.apk" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="text-center px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-blue-600 text-white font-medium shadow-lg">
                   ডাউনলোড করুন
                 </a>
@@ -179,12 +305,14 @@ export default function App() {
               className="text-center lg:text-left"
             >
               <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6 tracking-tight">
-                আপনার বিল্ডিং ব্যবস্থাপনা <br/>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-blue-600">এখন হাতের মুঠোয়</span>
+                <EditableText path="heroTitle1" value={content.heroTitle1} /> <br/>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-blue-600">
+                  <EditableText path="heroTitle2" value={content.heroTitle2} />
+                </span>
               </h1>
               
               <p className={`text-lg lg:text-xl mb-10 leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-                হলান টাওয়ার অ্যাপের মাধ্যমে সার্ভিস চার্জ পরিশোধ, নোটিশ দেখা এবং মেইনটেন্যান্স আপডেট পাওয়া এখন আরও সহজ ও নিরাপদ।
+                <EditableText path="heroSubtitle" value={content.heroSubtitle} />
               </p>
               
               <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
@@ -210,8 +338,9 @@ export default function App() {
               <div className="relative w-[300px] h-[600px] bg-slate-900 rounded-[3.5rem] border-[10px] border-slate-800 shadow-2xl overflow-hidden mx-auto z-10">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-36 h-7 bg-slate-800 rounded-b-2xl z-20"></div>
                 <div className="w-full h-full bg-slate-800 relative group">
-                  <img 
-                    src="https://i.imghippo.com/files/KbLJ8581V.jpg" 
+                  <EditableImage 
+                    path="heroImageUrl"
+                    src={content.heroImageUrl} 
                     alt="App Interface" 
                     className="w-full h-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105"
                   />
@@ -282,7 +411,7 @@ export default function App() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, idx) => (
+            {content.features.map((feature, idx) => (
               <motion.div 
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
@@ -290,17 +419,42 @@ export default function App() {
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
                 whileHover={{ y: -8 }}
-                className={`p-8 rounded-3xl border transition-all duration-300 ${darkMode ? 'bg-slate-800/40 border-slate-700 hover:bg-slate-800 hover:border-emerald-500/50' : 'bg-slate-50 border-slate-100 hover:bg-white hover:border-emerald-200 hover:shadow-xl'} group`}
+                className={`p-8 rounded-3xl border transition-all duration-300 relative ${darkMode ? 'bg-slate-800/40 border-slate-700 hover:bg-slate-800 hover:border-emerald-500/50' : 'bg-slate-50 border-slate-100 hover:bg-white hover:border-emerald-200 hover:shadow-xl'} group`}
               >
+                {isAdminLoggedIn && (
+                  <button 
+                    onClick={() => {
+                      const newFeatures = [...content.features];
+                      newFeatures.splice(idx, 1);
+                      updateContent('features', newFeatures);
+                    }}
+                    className="absolute top-4 right-4 p-2 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                )}
                 <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-colors ${darkMode ? 'bg-slate-700 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white' : 'bg-white text-emerald-600 shadow-sm group-hover:bg-emerald-500 group-hover:text-white'}`}>
-                  {feature.icon}
+                  {iconMap[feature.icon] || <Smartphone />}
                 </div>
-                <h3 className="text-xl font-bold mb-3 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{feature.title}</h3>
+                <h3 className="text-xl font-bold mb-3 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                  <EditableText path={`features.${idx}.title`} value={feature.title} />
+                </h3>
                 <p className={`text-sm leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-                  {feature.desc}
+                  <EditableText path={`features.${idx}.desc`} value={feature.desc} />
                 </p>
               </motion.div>
             ))}
+            {isAdminLoggedIn && (
+              <button 
+                onClick={() => {
+                  updateContent('features', [...content.features, { icon: "Smartphone", title: "নতুন ফিচার", desc: "ফিচারের বর্ণনা এখানে লিখুন" }]);
+                }}
+                className={`p-8 rounded-3xl border-2 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${darkMode ? 'border-slate-700 hover:border-emerald-500 text-slate-500 hover:text-emerald-500' : 'border-slate-200 hover:border-emerald-500 text-slate-400 hover:text-emerald-500'}`}
+              >
+                <Plus size={32} />
+                <span className="font-bold">ফিচার যোগ করুন</span>
+              </button>
+            )}
           </div>
         </div>
       </section>
@@ -344,7 +498,7 @@ export default function App() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {installSteps.map((item, idx) => (
+            {content.installSteps.map((item, idx) => (
               <motion.div 
                 key={idx}
                 initial={{ opacity: 0, y: 30 }}
@@ -353,22 +507,52 @@ export default function App() {
                 transition={{ delay: idx * 0.2 }}
                 className="relative group"
               >
-                <div className={`p-8 rounded-3xl h-full border transition-all ${darkMode ? 'bg-slate-800 border-slate-700 hover:border-emerald-500/50' : 'bg-slate-50 border-slate-100 hover:shadow-xl hover:bg-white'}`}>
+                <div className={`p-8 rounded-3xl h-full border transition-all relative ${darkMode ? 'bg-slate-800 border-slate-700 hover:border-emerald-500/50' : 'bg-slate-50 border-slate-100 hover:shadow-xl hover:bg-white'}`}>
+                  {isAdminLoggedIn && (
+                    <button 
+                      onClick={() => {
+                        const newSteps = [...content.installSteps];
+                        newSteps.splice(idx, 1);
+                        updateContent('installSteps', newSteps);
+                      }}
+                      className="absolute top-4 right-4 p-2 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                   <div className="absolute -top-6 left-8 w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-blue-600 text-white flex items-center justify-center font-bold text-xl shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform">
-                    {idx + 1}
+                    <EditableText path={`installSteps.${idx}.step`} value={item.step} />
                   </div>
                   <div className="mt-6">
-                    <h3 className="text-xl font-bold mb-4 h-14 flex items-center">{item.title}</h3>
+                    <h3 className="text-xl font-bold mb-4 h-14 flex items-center">
+                      <EditableText path={`installSteps.${idx}.title`} value={item.title} />
+                    </h3>
                     <p className={`text-sm mb-6 ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-                      {item.desc}
+                      <EditableText path={`installSteps.${idx}.desc`} value={item.desc} />
                     </p>
                     <div className={`w-full h-32 rounded-xl overflow-hidden ${darkMode ? 'bg-slate-900' : 'bg-slate-200'}`}>
-                       <img src={`https://picsum.photos/seed/step${idx}/400/300`} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Step" />
+                       <EditableImage 
+                         path={`installSteps.${idx}.imageUrl`} 
+                         src={item.imageUrl || `https://picsum.photos/seed/step${idx}/400/300`} 
+                         className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" 
+                         alt="Step" 
+                       />
                     </div>
                   </div>
                 </div>
               </motion.div>
             ))}
+            {isAdminLoggedIn && (
+              <button 
+                onClick={() => {
+                  updateContent('installSteps', [...content.installSteps, { step: "০৫", title: "নতুন ধাপ", desc: "ধাপের বর্ণনা এখানে লিখুন", imageUrl: "https://picsum.photos/seed/newstep/400/300" }]);
+                }}
+                className={`p-8 rounded-3xl border-2 border-dashed flex flex-col items-center justify-center gap-4 transition-all min-h-[300px] ${darkMode ? 'border-slate-700 hover:border-emerald-500 text-slate-500 hover:text-emerald-500' : 'border-slate-200 hover:border-emerald-500 text-slate-400 hover:text-emerald-500'}`}
+              >
+                <Plus size={32} />
+                <span className="font-bold">ধাপ যোগ করুন</span>
+              </button>
+            )}
           </div>
         </div>
       </section>
@@ -423,23 +607,33 @@ export default function App() {
                 <div className="space-y-5">
                   <div className={`flex justify-between py-3 border-b ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
                     <span className={`${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>বর্তমান ভার্সন</span>
-                    <span className="font-bold font-mono">১.০.০</span>
+                    <span className="font-bold font-mono">
+                      <EditableText path="appDetails.version" value={content.appDetails.version} />
+                    </span>
                   </div>
                   <div className={`flex justify-between py-3 border-b ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
                     <span className={`${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>অ্যাপ সাইজ</span>
-                    <span className="font-bold font-mono">১৫ মেগাবাইট</span>
+                    <span className="font-bold font-mono">
+                      <EditableText path="appDetails.size" value={content.appDetails.size} />
+                    </span>
                   </div>
                   <div className={`flex justify-between py-3 border-b ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
                     <span className={`${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>ডেভেলপার</span>
-                    <span className="font-bold">হলান টেক</span>
+                    <span className="font-bold">
+                      <EditableText path="appDetails.developer" value={content.appDetails.developer} />
+                    </span>
                   </div>
                   <div className={`flex justify-between py-3 border-b ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
                     <span className={`${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>আপডেট তারিখ</span>
-                    <span className="font-bold font-mono">২৪ ফেব্রুয়ারি ২০২৬</span>
+                    <span className="font-bold font-mono">
+                      <EditableText path="appDetails.updateDate" value={content.appDetails.updateDate} />
+                    </span>
                   </div>
                   <div className={`flex justify-between py-3 border-b ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
                     <span className={`${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>রিকোয়ারমেন্ট</span>
-                    <span className="font-bold">Android 8.0+</span>
+                    <span className="font-bold">
+                      <EditableText path="appDetails.requirement" value={content.appDetails.requirement} />
+                    </span>
                   </div>
                 </div>
 
@@ -466,19 +660,44 @@ export default function App() {
           </div>
 
           <div className="space-y-4">
-            {faqs.map((item, idx) => (
-              <details key={idx} className={`group rounded-2xl border overflow-hidden transition-all duration-300 ${darkMode ? 'bg-slate-800 border-slate-700 open:bg-slate-800' : 'bg-white border-slate-200 open:shadow-lg'}`}>
+            {content.faqs.map((item, idx) => (
+              <details key={idx} className={`group rounded-2xl border overflow-hidden transition-all duration-300 relative ${darkMode ? 'bg-slate-800 border-slate-700 open:bg-slate-800' : 'bg-white border-slate-200 open:shadow-lg'}`}>
+                {isAdminLoggedIn && (
+                  <button 
+                    onClick={() => {
+                      const newFaqs = [...content.faqs];
+                      newFaqs.splice(idx, 1);
+                      updateContent('faqs', newFaqs);
+                    }}
+                    className="absolute top-6 right-16 p-2 bg-red-500 text-white rounded-full z-10"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                )}
                 <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
-                  <span className="font-bold text-lg pr-4">{item.q}</span>
+                  <span className="font-bold text-lg pr-4">
+                    <EditableText path={`faqs.${idx}.q`} value={item.q} />
+                  </span>
                   <span className={`transition-transform duration-300 group-open:rotate-180 p-2 rounded-full ${darkMode ? 'bg-slate-700' : 'bg-slate-100'}`}>
                     <ChevronRight size={20} />
                   </span>
                 </summary>
                 <div className={`px-6 pb-6 pt-0 leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
-                  {item.a}
+                  <EditableText path={`faqs.${idx}.a`} value={item.a} />
                 </div>
               </details>
             ))}
+            {isAdminLoggedIn && (
+              <button 
+                onClick={() => {
+                  updateContent('faqs', [...content.faqs, { q: "নতুন প্রশ্ন", a: "উত্তর এখানে লিখুন" }]);
+                }}
+                className={`w-full p-6 rounded-2xl border-2 border-dashed flex items-center justify-center gap-4 transition-all ${darkMode ? 'border-slate-700 hover:border-emerald-500 text-slate-500 hover:text-emerald-500' : 'border-slate-200 hover:border-emerald-500 text-slate-400 hover:text-emerald-500'}`}
+              >
+                <Plus size={24} />
+                <span className="font-bold">প্রশ্ন যোগ করুন</span>
+              </button>
+            )}
           </div>
         </div>
       </section>
@@ -523,11 +742,13 @@ export default function App() {
           <div className="grid md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center gap-3 mb-6 text-white">
-                <img src="https://i.imghippo.com/files/xPV6164w.png" alt="Logo" className="w-12 h-12 object-contain" />
-                <span className="font-bold text-2xl tracking-tight">হলান টাওয়ার</span>
+                <EditableImage path="logoUrl" src={content.logoUrl} alt="Logo" className="w-12 h-12 object-contain" />
+                <span className="font-bold text-2xl tracking-tight">
+                  <EditableText path="buildingName" value={content.buildingName} />
+                </span>
               </div>
               <p className="mb-8 max-w-sm leading-relaxed">
-                আধুনিক আবাসন ব্যবস্থাপনার এক অনন্য উদাহরণ। আমরা নিশ্চিত করি সর্বোচ্চ নিরাপত্তা এবং নাগরিক সুবিধা।
+                <EditableText path="footerDesc" value={content.footerDesc} />
               </p>
               <div className="flex gap-4">
                 <a href="#" className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all">
@@ -596,6 +817,78 @@ export default function App() {
           >
             <Download size={24} />
           </motion.a>
+        )}
+      </AnimatePresence>
+
+      {/* Admin Login Modal */}
+      <AnimatePresence>
+        {isAdminModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsAdminModalOpen(false)}
+              className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className={`relative w-full max-w-md p-8 rounded-[2rem] border shadow-2xl ${darkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-100'}`}
+            >
+              <button 
+                onClick={() => setIsAdminModalOpen(false)}
+                className="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mx-auto mb-4">
+                  <Lock size={32} />
+                </div>
+                <h3 className="text-2xl font-bold">এডমিন লগইন</h3>
+                <p className={`mt-2 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>প্যানেল অ্যাক্সেস করতে লগইন করুন</p>
+              </div>
+
+              <form onSubmit={handleAdminLogin} className="space-y-5">
+                <div>
+                  <label className="block text-sm font-medium mb-2">ইউজারনেম</label>
+                  <input 
+                    type="text" 
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className={`w-full px-5 py-3 rounded-xl border outline-none transition-all ${darkMode ? 'bg-slate-800 border-slate-700 focus:border-emerald-500' : 'bg-slate-50 border-slate-200 focus:border-emerald-500'}`}
+                    placeholder="ইউজারনেম দিন"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">পাসওয়ার্ড</label>
+                  <input 
+                    type="password" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={`w-full px-5 py-3 rounded-xl border outline-none transition-all ${darkMode ? 'bg-slate-800 border-slate-700 focus:border-emerald-500' : 'bg-slate-50 border-slate-200 focus:border-emerald-500'}`}
+                    placeholder="পাসওয়ার্ড দিন"
+                    required
+                  />
+                </div>
+                
+                {loginError && (
+                  <p className="text-red-500 text-sm font-medium text-center">{loginError}</p>
+                )}
+
+                <button 
+                  type="submit"
+                  className="w-full py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-blue-600 text-white font-bold text-lg shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all hover:-translate-y-0.5 active:translate-y-0"
+                >
+                  লগইন করুন
+                </button>
+              </form>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>
