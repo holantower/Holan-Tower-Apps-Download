@@ -751,8 +751,13 @@ export default function App() {
               <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-[2.5rem] blur-2xl opacity-20"></div>
               <div className={`relative p-10 rounded-[2.5rem] border ${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-100 shadow-2xl'}`}>
                 <div className="flex items-center gap-4 mb-8">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-blue-600 flex items-center justify-center text-white shadow-lg">
-                    <Building2 size={32} />
+                  <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-lg border border-slate-100 dark:border-slate-800">
+                    <img 
+                      src={content.logoUrl} 
+                      alt="Logo" 
+                      className="w-full h-full object-contain p-2 bg-white"
+                      referrerPolicy="no-referrer"
+                    />
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold">হলান টাওয়ার অ্যাপ</h3>
