@@ -964,7 +964,7 @@ export default function App() {
               {/* Map Embed */}
               <div className="mt-8 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group relative">
                 <iframe
-                  src="https://maps.google.com/maps?q=23.852604,90.4321598&t=k&z=19&ie=UTF8&iwloc=&output=embed"
+                  src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d912.260769595932!2d90.4321598!3d23.852604!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c70057ad5d4f%3A0xe6299bcc3a3ae506!2z4Ka54Kay4Ka-4KaoIOCmn-CmvuCmk-Cmr-CmvOCmvuCmsCAtIOCmueCmsuCmvuCmqCDgpp_gpr7gppPgpq_gprzgpr7gprA!5e1!3m2!1sbn!2sbd!4v1752594822521!5m2!1sbn!2sbd"
                   width="100%"
                   height="160"
                   style={{ border: 0 }}
@@ -980,9 +980,7 @@ export default function App() {
           <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
             <p>© ২০২৬ হলান টাওয়ার। সর্বস্বত্ব সংরক্ষিত।</p>
             <div className="flex gap-8 text-sm">
-              <a href="#" className="hover:text-white transition-colors">প্রাইভেসি পলিসি</a>
-              <a href="#" className="hover:text-white transition-colors">শর্তাবলী</a>
-              <a href="#" className="hover:text-white transition-colors">কুকিজ পলিসি</a>
+              <span className="font-bold">Design By A.H.M. RIFAT HASAN</span>
             </div>
           </div>
         </div>
