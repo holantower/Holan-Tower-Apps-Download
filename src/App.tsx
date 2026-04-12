@@ -49,6 +49,15 @@ export default function App() {
   const showFloatingBtn = useTransform(scrollYProgress, [0, 0.2], [false, true]);
   const [showBtn, setShowBtn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const { scrollLeft, clientWidth } = scrollRef.current;
+      const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth;
+      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
 
   // Content State
   const [content, setContent] = useState({
@@ -597,45 +606,79 @@ export default function App() {
             </p>
           </div>
 
-          <div className="flex overflow-x-auto pb-12 hide-scrollbar gap-8 snap-x snap-mandatory px-4 md:justify-center">
-             {content.interfaceImages.map((img, idx) => (
-               <div key={idx} className="snap-center shrink-0">
-                 <div className="w-[280px] h-[580px] bg-slate-900 rounded-[3rem] border-[8px] border-slate-800 shadow-2xl overflow-hidden relative group transition-transform hover:-translate-y-4 duration-500">
-                    {isAdminLoggedIn && (
-                      <button 
-                        onClick={() => {
-                          const newImgs = [...content.interfaceImages];
-                          newImgs.splice(idx, 1);
-                          updateContent('interfaceImages', newImgs);
-                        }}
-                        className="absolute top-6 right-6 p-2 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg"
-                      >
-                        <Trash2 size={20} />
-                      </button>
-                    )}
-                    <EditableImage 
-                      path={`interfaceImages.${idx}`} 
-                      src={img} 
-                      className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" 
-                      alt={`Screen ${idx + 1}`} 
-                    />
-                    <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors pointer-events-none"></div>
+          <div className="relative group">
+            <div 
+              ref={scrollRef}
+              className="flex overflow-x-auto pb-12 hide-scrollbar gap-8 snap-x snap-mandatory px-4 md:justify-center scroll-smooth"
+            >
+               {content.interfaceImages.map((img, idx) => (
+                 <div key={idx} className="snap-center shrink-0">
+                   <div className="w-[280px] h-[580px] bg-slate-900 rounded-[3rem] border-[8px] border-slate-800 shadow-2xl overflow-hidden relative group/item transition-transform hover:-translate-y-4 duration-500">
+                      {isAdminLoggedIn && (
+                        <button 
+                          onClick={() => {
+                            const newImgs = [...content.interfaceImages];
+                            newImgs.splice(idx, 1);
+                            updateContent('interfaceImages', newImgs);
+                          }}
+                          className="absolute top-6 right-6 p-2 bg-red-500 text-white rounded-full opacity-0 group-hover/item:opacity-100 transition-opacity z-50 shadow-lg"
+                        >
+                          <Trash2 size={20} />
+                        </button>
+                      )}
+                      <EditableImage 
+                        path={`interfaceImages.${idx}`} 
+                        src={img} 
+                        className="w-full h-full object-cover transition-opacity" 
+                        alt={`Screen ${idx + 1}`} 
+                      />
+                   </div>
                  </div>
-               </div>
-             ))}
-             {isAdminLoggedIn && (
-               <div className="snap-center shrink-0">
-                 <button 
-                   onClick={() => {
-                     updateContent('interfaceImages', [...content.interfaceImages, "https://picsum.photos/seed/newui/560/1120"]);
-                   }}
-                   className={`w-[280px] h-[580px] rounded-[3rem] border-4 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${darkMode ? 'border-slate-800 hover:border-emerald-500 text-slate-700 hover:text-emerald-500' : 'border-slate-200 hover:border-emerald-500 text-slate-300 hover:text-emerald-500'}`}
-                 >
-                   <Plus size={48} />
-                   <span className="font-bold text-xl">স্ক্রিনশট যোগ করুন</span>
-                 </button>
-               </div>
-             )}
+               ))}
+               {isAdminLoggedIn && (
+                 <div className="snap-center shrink-0">
+                   <button 
+                     onClick={() => {
+                       updateContent('interfaceImages', [...content.interfaceImages, "https://picsum.photos/seed/newui/560/1120"]);
+                     }}
+                     className={`w-[280px] h-[580px] rounded-[3rem] border-4 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${darkMode ? 'border-slate-800 hover:border-emerald-500 text-slate-700 hover:text-emerald-500' : 'border-slate-200 hover:border-emerald-500 text-slate-300 hover:text-emerald-500'}`}
+                   >
+                     <Plus size={48} />
+                     <span className="font-bold text-xl">স্ক্রিনশট যোগ করুন</span>
+                   </button>
+                 </div>
+               )}
+            </div>
+
+            {/* Navigation Arrows */}
+            <button 
+              onClick={() => scroll('left')}
+              className={`absolute left-4 lg:-left-16 top-1/2 -translate-y-1/2 z-20 p-4 rounded-full border shadow-2xl backdrop-blur-md transition-all ${darkMode ? 'bg-slate-800/80 border-slate-700 text-white hover:bg-emerald-600 hover:border-emerald-500' : 'bg-white/80 border-slate-100 text-slate-900 hover:bg-emerald-600 hover:text-white hover:border-emerald-500'} hidden md:flex active:scale-95`}
+            >
+              <ChevronLeft size={28} />
+            </button>
+            <button 
+              onClick={() => scroll('right')}
+              className={`absolute right-4 lg:-right-16 top-1/2 -translate-y-1/2 z-20 p-4 rounded-full border shadow-2xl backdrop-blur-md transition-all ${darkMode ? 'bg-slate-800/80 border-slate-700 text-white hover:bg-emerald-600 hover:border-emerald-500' : 'bg-white/80 border-slate-100 text-slate-900 hover:bg-emerald-600 hover:text-white hover:border-emerald-500'} hidden md:flex active:scale-95`}
+            >
+              <ChevronRight size={28} />
+            </button>
+
+            {/* Mobile Navigation Arrows */}
+            <div className="flex justify-center gap-6 mt-6 md:hidden">
+              <button 
+                onClick={() => scroll('left')}
+                className={`p-4 rounded-2xl border shadow-lg active:scale-90 transition-transform ${darkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-slate-100 text-slate-900'}`}
+              >
+                <ChevronLeft size={24} />
+              </button>
+              <button 
+                onClick={() => scroll('right')}
+                className={`p-4 rounded-2xl border shadow-lg active:scale-90 transition-transform ${darkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-white border-slate-100 text-slate-900'}`}
+              >
+                <ChevronRight size={24} />
+              </button>
+            </div>
           </div>
         </div>
       </section>
