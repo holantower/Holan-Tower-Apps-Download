@@ -74,6 +74,16 @@ export default function App() {
       { step: "০৩", title: "Unknown Sources Allow করুন", desc: "যদি পারমিশন চায়, তবে সেটিংস থেকে 'Allow' করে দিন", imageUrl: "https://picsum.photos/seed/step2/400/300" },
       { step: "০৪", title: "অ্যাপ ওপেন করে লগইন করুন", desc: "আপনার ফ্ল্যাট নম্বর দিয়ে রেজিস্ট্রেশন সম্পন্ন করুন", imageUrl: "https://picsum.photos/seed/step3/400/300" }
     ],
+    installTitle: "ইন্সটলেশন গাইড",
+    installSubtitle: "মাত্র ৪টি সহজ ধাপে অ্যাপটি আপনার ফোনে সেটআপ করুন",
+    interfaceTitle: "অ্যাপ ইন্টারফেস",
+    interfaceSubtitle: "সহজ এবং ইউজার ফ্রেন্ডলি ডিজাইন",
+    interfaceImages: [
+      "https://picsum.photos/seed/ui1/560/1120",
+      "https://picsum.photos/seed/ui2/560/1120",
+      "https://picsum.photos/seed/ui3/560/1120",
+      "https://picsum.photos/seed/ui4/560/1120"
+    ],
     faqs: [
       { q: "অ্যাপ কিভাবে ডাউনলোড করবো?", a: "আমাদের ওয়েবসাইটের 'ডাউনলোড' বাটনে ক্লিক করলেই অ্যাপটি ডাউনলোড শুরু হবে।" },
       { q: "লগইন সমস্যা হলে কি করবো?", a: "লগইন করতে সমস্যা হলে বিল্ডিং ম্যানেজারের সাথে যোগাযোগ করুন অথবা সাপোর্ট নম্বরে কল করুন।" },
@@ -164,7 +174,7 @@ export default function App() {
     if (!isAdminLoggedIn) return <img src={src} alt={alt} className={className} />;
 
     return (
-      <div className="relative inline-block group/img">
+      <div className={`relative group/img ${className?.includes('w-full') ? 'w-full' : 'inline-block'} ${className?.includes('h-full') ? 'h-full' : ''}`}>
         <img src={src} alt={alt} className={className} />
         <button 
           onClick={(e) => {
@@ -173,7 +183,7 @@ export default function App() {
             const newUrl = prompt('নতুন ইমেজের URL দিন:', src);
             if (newUrl) updateContent(path, newUrl);
           }}
-          className="absolute -bottom-3 -right-3 bg-emerald-500 text-white p-2 rounded-xl shadow-2xl hover:bg-emerald-600 transition-all z-40 flex items-center gap-1.5 text-[10px] font-bold border-2 border-white dark:border-slate-900 hover:scale-110 active:scale-95"
+          className="absolute bottom-2 right-2 bg-emerald-500 text-white p-2 rounded-xl shadow-2xl hover:bg-emerald-600 transition-all z-40 flex items-center gap-1.5 text-[10px] font-bold border-2 border-white dark:border-slate-900 hover:scale-110 active:scale-95"
           title="ছবি পরিবর্তন করুন"
         >
           <ImagePlus size={14} />
@@ -466,25 +476,53 @@ export default function App() {
         <div className={`absolute inset-0 ${darkMode ? 'bg-slate-950' : 'bg-slate-50/50'}`}></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">অ্যাপ ইন্টারফেস</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <EditableText path="interfaceTitle" value={content.interfaceTitle} />
+            </h2>
             <p className={`text-lg ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-              সহজ এবং ইউজার ফ্রেন্ডলি ডিজাইন
+              <EditableText path="interfaceSubtitle" value={content.interfaceSubtitle} />
             </p>
           </div>
 
           <div className="flex overflow-x-auto pb-12 hide-scrollbar gap-8 snap-x snap-mandatory px-4 md:justify-center">
-             {[1, 2, 3, 4].map((item) => (
-               <div key={item} className="snap-center shrink-0">
+             {content.interfaceImages.map((img, idx) => (
+               <div key={idx} className="snap-center shrink-0">
                  <div className="w-[280px] h-[580px] bg-slate-900 rounded-[3rem] border-[8px] border-slate-800 shadow-2xl overflow-hidden relative group transition-transform hover:-translate-y-4 duration-500">
-                    <img 
-                      src={`https://picsum.photos/seed/ui${item}/560/1120`} 
-                      alt={`Screen ${item}`} 
-                      className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                    {isAdminLoggedIn && (
+                      <button 
+                        onClick={() => {
+                          const newImgs = [...content.interfaceImages];
+                          newImgs.splice(idx, 1);
+                          updateContent('interfaceImages', newImgs);
+                        }}
+                        className="absolute top-6 right-6 p-2 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg"
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    )}
+                    <EditableImage 
+                      path={`interfaceImages.${idx}`} 
+                      src={img} 
+                      className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" 
+                      alt={`Screen ${idx + 1}`} 
                     />
-                    <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+                    <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors pointer-events-none"></div>
                  </div>
                </div>
              ))}
+             {isAdminLoggedIn && (
+               <div className="snap-center shrink-0">
+                 <button 
+                   onClick={() => {
+                     updateContent('interfaceImages', [...content.interfaceImages, "https://picsum.photos/seed/newui/560/1120"]);
+                   }}
+                   className={`w-[280px] h-[580px] rounded-[3rem] border-4 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${darkMode ? 'border-slate-800 hover:border-emerald-500 text-slate-700 hover:text-emerald-500' : 'border-slate-200 hover:border-emerald-500 text-slate-300 hover:text-emerald-500'}`}
+                 >
+                   <Plus size={48} />
+                   <span className="font-bold text-xl">স্ক্রিনশট যোগ করুন</span>
+                 </button>
+               </div>
+             )}
           </div>
         </div>
       </section>
@@ -493,9 +531,11 @@ export default function App() {
       <section id="install" className={`py-24 ${darkMode ? 'bg-slate-900/50' : 'bg-white'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">ইন্সটলেশন গাইড</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <EditableText path="installTitle" value={content.installTitle} />
+            </h2>
             <p className={`text-lg ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-              মাত্র ৪টি সহজ ধাপে অ্যাপটি আপনার ফোনে সেটআপ করুন
+              <EditableText path="installSubtitle" value={content.installSubtitle} />
             </p>
           </div>
 
