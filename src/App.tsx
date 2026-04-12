@@ -964,7 +964,7 @@ export default function App() {
               {/* Map Embed */}
               <div className="mt-8 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl group relative">
                 <iframe
-                  src={content.mapEmbedUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d912.112!2d90.4152!3d23.8735!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c5d0f1a8c5b1%3A0x4a4a4a4a4a4a4a4a!2sHolan%20Tower!5e1!3m2!1sen!2sbd!4v1712880000000!5m2!1sen!2sbd"}
+                  src="https://maps.google.com/maps?q=23.852604,90.4321598&t=k&z=19&ie=UTF8&iwloc=&output=embed"
                   width="100%"
                   height="160"
                   style={{ border: 0 }}
@@ -973,20 +973,6 @@ export default function App() {
                   referrerPolicy="no-referrer-when-downgrade"
                   className="grayscale-[0.2] group-hover:grayscale-0 transition-all duration-500"
                 ></iframe>
-                {isAdminLoggedIn && (
-                  <div className="absolute top-2 right-2 z-10">
-                    <button 
-                      onClick={() => {
-                        const newUrl = prompt("Enter Google Maps Embed URL:", content.mapEmbedUrl);
-                        if (newUrl) updateContent("mapEmbedUrl", newUrl);
-                      }}
-                      className="bg-emerald-600 text-white p-2 rounded-lg shadow-lg hover:bg-emerald-700 transition-colors"
-                      title="Edit Map URL"
-                    >
-                      <Globe size={14} />
-                    </button>
-                  </div>
-                )}
               </div>
             </div>
           </div>
