@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, FormEvent, ReactNode } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import { supabase } from './lib/supabase';
 import { 
   Download, 
   Moon, 
@@ -99,6 +100,25 @@ export default function App() {
     },
     footerDesc: "আধুনিক আবাসন ব্যবস্থাপনার এক অনন্য উদাহরণ। আমরা নিশ্চিত করি সর্বোচ্চ নিরাপত্তা এবং নাগরিক সুবিধা।"
   });
+
+  useEffect(() => {
+    async function loadContent() {
+      try {
+        const { data, error } = await supabase
+          .from('app_content')
+          .select('data')
+          .eq('id', 'main')
+          .single();
+        
+        if (data && !error) {
+          setContent(data.data);
+        }
+      } catch (e) {
+        console.error("Supabase load error:", e);
+      }
+    }
+    loadContent();
+  }, []);
 
   const iconMap: Record<string, ReactNode> = {
     CreditCard: <CreditCard className="w-6 h-6" />,
@@ -219,8 +239,21 @@ export default function App() {
               <a href="#faq" className="hover:text-emerald-500 transition-colors font-medium">FAQ</a>
               {isAdminLoggedIn ? (
                 <button 
-                  onClick={() => setIsAdminLoggedIn(false)}
-                  className="px-4 py-2 rounded-xl bg-red-500 text-white font-medium flex items-center gap-2"
+                  onClick={async () => {
+                    try {
+                      const { error } = await supabase
+                        .from('app_content')
+                        .upsert({ id: 'main', data: content });
+                      
+                      if (error) throw error;
+                      
+                      setIsAdminLoggedIn(false);
+                      alert('সকল পরিবর্তন সফলভাবে Supabase-এ সেভ করা হয়েছে!');
+                    } catch (error: any) {
+                      alert('সেভ করতে সমস্যা হয়েছে: ' + error.message);
+                    }
+                  }}
+                  className="px-4 py-2 rounded-xl bg-emerald-600 text-white font-medium flex items-center gap-2 hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-500/20"
                 >
                   <Save size={16} />
                   সেভ করুন
