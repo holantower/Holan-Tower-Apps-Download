@@ -633,7 +633,7 @@ export default function App() {
           <div className="relative group">
             <div 
               ref={scrollRef}
-              className="flex overflow-x-auto pb-12 hide-scrollbar gap-8 snap-x snap-mandatory px-4 md:justify-center scroll-smooth"
+              className="flex overflow-x-auto pt-10 pb-12 hide-scrollbar gap-8 snap-x snap-mandatory px-4 md:justify-center scroll-smooth"
             >
                {content.interfaceImages.map((img, idx) => (
                  <div key={idx} className="snap-center shrink-0">
