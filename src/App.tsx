@@ -37,6 +37,29 @@ import {
   Save
 } from 'lucide-react';
 
+const AnimatedDownloadIcon = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+    <motion.g
+      animate={{ y: [0, 2, 0] }}
+      transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+    >
+      <polyline points="7 7 12 12 17 7" />
+      <line x1="12" y1="12" x2="12" y2="2" />
+    </motion.g>
+  </svg>
+);
+
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -452,7 +475,7 @@ export default function App() {
                   className="group relative flex items-center justify-center gap-3 bg-red-600 text-white px-8 py-4 rounded-2xl hover:bg-red-700 transition-all shadow-xl shadow-red-500/20 hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <Download size={24} />
+                  <AnimatedDownloadIcon size={24} />
                   <span className="font-bold text-lg">এখনই ডাউনলোড করুন</span>
                 </motion.a>
                 <a href="https://holantower.vercel.app/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-500/20 hover:shadow-2xl hover:-translate-y-1">
@@ -857,7 +880,7 @@ export default function App() {
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     className="w-full py-4 rounded-2xl bg-red-600 text-white font-bold text-lg transition-all hover:bg-red-700 hover:scale-[1.05] active:scale-[0.98] shadow-xl shadow-red-500/20 flex items-center justify-center gap-3"
                   >
-                    <Download size={22} />
+                    <AnimatedDownloadIcon size={22} />
                     সরাসরি ডাউনলোড করুন
                   </motion.a>
                 </div>
@@ -936,9 +959,9 @@ export default function App() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <a href="https://github.com/rifathasan1970r/Holantower-apps-download/raw/refs/heads/main/HolanTower.apk" target="_blank" rel="noopener noreferrer" className="relative group bg-white text-emerald-700 px-10 py-5 rounded-2xl font-bold text-xl hover:bg-emerald-50 transition-all shadow-2xl hover:shadow-white/20 hover:-translate-y-1 flex items-center justify-center gap-3 w-full sm:w-auto overflow-hidden">
+            <a href="https://github.com/rifathasan1970r/apps-holantower/raw/refs/heads/main/HolanTower%20V5.0.apk" target="_blank" rel="noopener noreferrer" className="relative group bg-white text-emerald-700 px-10 py-5 rounded-2xl font-bold text-xl hover:bg-emerald-50 transition-all shadow-2xl hover:shadow-white/20 hover:-translate-y-1 flex items-center justify-center gap-3 w-full sm:w-auto overflow-hidden">
               <span className="absolute w-full h-full bg-emerald-100/50 scale-0 group-hover:scale-150 transition-transform duration-500 rounded-full"></span>
-              <Download size={24} className="relative z-10" />
+              <AnimatedDownloadIcon size={24} className="relative z-10" />
               <span className="relative z-10">ডাউনলোড করুন</span>
             </a>
             <button className="bg-transparent border-2 border-white/30 text-white px-10 py-5 rounded-2xl font-bold text-xl hover:bg-white/10 transition-all flex items-center justify-center gap-3 w-full sm:w-auto backdrop-blur-sm">
@@ -1075,7 +1098,7 @@ export default function App() {
             whileTap={{ scale: 0.9 }}
             className="fixed bottom-8 right-8 z-40 bg-red-600 text-white p-4 rounded-full shadow-[0_0_20px_rgba(220,38,38,0.4)] hover:bg-red-700 transition-colors"
           >
-            <Download size={24} />
+            <AnimatedDownloadIcon size={24} />
           </motion.a>
         )}
       </AnimatePresence>
