@@ -48,6 +48,7 @@ export default function App() {
   const { scrollYProgress } = useScroll();
   const showFloatingBtn = useTransform(scrollYProgress, [0, 0.2], [false, true]);
   const [showBtn, setShowBtn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Content State
   const [content, setContent] = useState({
@@ -103,6 +104,12 @@ export default function App() {
 
   useEffect(() => {
     async function loadContent() {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      if (!supabaseUrl || !supabaseUrl.startsWith('http')) {
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const { data, error } = await supabase
           .from('app_content')
@@ -112,9 +119,13 @@ export default function App() {
         
         if (data && !error) {
           setContent(data.data);
+        } else if (error && error.code !== 'PGRST116') {
+          console.error("Supabase load error:", error);
         }
       } catch (e) {
         console.error("Supabase load error:", e);
+      } finally {
+        setIsLoading(false);
       }
     }
     loadContent();
@@ -213,6 +224,17 @@ export default function App() {
     );
   };
 
+  if (isLoading) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className={`font-medium ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>লোড হচ্ছে...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`min-h-screen font-sans transition-colors duration-300 ${darkMode ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
       
@@ -240,17 +262,29 @@ export default function App() {
               {isAdminLoggedIn ? (
                 <button 
                   onClick={async () => {
+                    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+                    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+                    if (!supabaseUrl || !supabaseKey) {
+                      alert('Supabase credentials missing! Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Settings > Secrets.');
+                      return;
+                    }
+
                     try {
                       const { error } = await supabase
                         .from('app_content')
-                        .upsert({ id: 'main', data: content });
+                        .upsert({ 
+                          id: 'main', 
+                          data: content
+                        });
                       
                       if (error) throw error;
                       
                       setIsAdminLoggedIn(false);
                       alert('সকল পরিবর্তন সফলভাবে Supabase-এ সেভ করা হয়েছে!');
                     } catch (error: any) {
-                      alert('সেভ করতে সমস্যা হয়েছে: ' + error.message);
+                      console.error('Save error:', error);
+                      alert('সেভ করতে সমস্যা হয়েছে: ' + (error.message || 'Unknown error. Please check if "app_content" table exists in Supabase.'));
                     }
                   }}
                   className="px-4 py-2 rounded-xl bg-emerald-600 text-white font-medium flex items-center gap-2 hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-500/20"
