@@ -449,13 +449,13 @@ export default function App() {
                   rel="noopener noreferrer" 
                   animate={{ scale: [1, 1.02, 1] }}
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                  className="group relative flex items-center justify-center gap-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-8 py-4 rounded-2xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
+                  className="group relative flex items-center justify-center gap-3 bg-red-600 text-white px-8 py-4 rounded-2xl hover:bg-red-700 transition-all shadow-xl shadow-red-500/20 hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <Download size={24} />
                   <span className="font-bold text-lg">এখনই ডাউনলোড করুন</span>
                 </motion.a>
-                <a href="https://holan-tower-apps.vercel.app/" target="_blank" rel="noopener noreferrer" className={`flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all border ${darkMode ? 'border-slate-700 hover:bg-slate-800 text-slate-300' : 'border-slate-200 hover:bg-white text-slate-700'} shadow-sm hover:shadow-md`}>
+                <a href="https://holan-tower-apps.vercel.app/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-500/20 hover:shadow-2xl hover:-translate-y-1">
                   <Globe size={20} />
                   <span>ওয়েব ভার্সন</span>
                 </a>
@@ -855,7 +855,7 @@ export default function App() {
                     rel="noopener noreferrer" 
                     animate={{ scale: [1, 1.02, 1] }}
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    className="w-full py-4 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-lg transition-all hover:scale-[1.05] active:scale-[0.98] shadow-xl flex items-center justify-center gap-3"
+                    className="w-full py-4 rounded-2xl bg-red-600 text-white font-bold text-lg transition-all hover:bg-red-700 hover:scale-[1.05] active:scale-[0.98] shadow-xl shadow-red-500/20 flex items-center justify-center gap-3"
                   >
                     <Download size={22} />
                     সরাসরি ডাউনলোড করুন
@@ -1073,7 +1073,7 @@ export default function App() {
             }}
             whileHover={{ scale: 1.2 }}
             whileTap={{ scale: 0.9 }}
-            className="fixed bottom-8 right-8 z-40 bg-emerald-600 text-white p-4 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:bg-emerald-700 transition-colors"
+            className="fixed bottom-8 right-8 z-40 bg-red-600 text-white p-4 rounded-full shadow-[0_0_20px_rgba(220,38,38,0.4)] hover:bg-red-700 transition-colors"
           >
             <Download size={24} />
           </motion.a>
