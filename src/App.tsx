@@ -444,7 +444,7 @@ export default function App() {
               
               <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
                 <motion.a 
-                  href="https://github.com/rifathasan1970r/Holantower-apps-download/raw/refs/heads/main/HolanTower.apk" 
+                  href="https://github.com/rifathasan1970r/apps-holantower/raw/refs/heads/main/HolanTower%20V5.0.apk" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   animate={{ scale: [1, 1.02, 1] }}
@@ -455,7 +455,7 @@ export default function App() {
                   <Download size={24} />
                   <span className="font-bold text-lg">এখনই ডাউনলোড করুন</span>
                 </motion.a>
-                <a href="https://holan-tower-apps.vercel.app/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-500/20 hover:shadow-2xl hover:-translate-y-1">
+                <a href="https://holantower.vercel.app/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-500/20 hover:shadow-2xl hover:-translate-y-1">
                   <Globe size={20} />
                   <span>ওয়েব ভার্সন</span>
                 </a>
@@ -850,7 +850,7 @@ export default function App() {
 
                 <div className="mt-10">
                   <motion.a 
-                    href="https://github.com/rifathasan1970r/Holantower-apps-download/raw/refs/heads/main/HolanTower.apk" 
+                    href="https://github.com/rifathasan1970r/apps-holantower/raw/refs/heads/main/HolanTower%20V5.0.apk" 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     animate={{ scale: [1, 1.02, 1] }}
@@ -1052,7 +1052,7 @@ export default function App() {
       <AnimatePresence>
         {showBtn && (
           <motion.a
-            href="https://github.com/rifathasan1970r/Holantower-apps-download/raw/refs/heads/main/HolanTower.apk"
+            href="https://github.com/rifathasan1970r/apps-holantower/raw/refs/heads/main/HolanTower%20V5.0.apk"
             target="_blank"
             rel="noopener noreferrer"
             initial={{ y: 100, opacity: 0, scale: 0.5 }}
