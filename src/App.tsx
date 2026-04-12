@@ -493,7 +493,8 @@ export default function App() {
             >
               {/* Phone Mockup */}
               <div className="relative w-[300px] h-[600px] bg-slate-900 rounded-[3.5rem] border-[10px] border-slate-800 shadow-2xl overflow-hidden mx-auto z-10">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-36 h-7 bg-slate-800 rounded-b-2xl z-20"></div>
+                {/* Punch-hole Camera */}
+                <div className="absolute top-5 right-8 w-4 h-4 bg-slate-900 border-2 border-slate-800 rounded-full z-20 shadow-inner"></div>
                 <div className="w-full h-full bg-slate-800 relative group">
                   <EditableImage 
                     path="heroImageUrl"
