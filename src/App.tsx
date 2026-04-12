@@ -434,11 +434,18 @@ export default function App() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
-                <a href="https://github.com/rifathasan1970r/Holantower-apps-download/raw/refs/heads/main/HolanTower.apk" target="_blank" rel="noopener noreferrer" className="group relative flex items-center justify-center gap-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-8 py-4 rounded-2xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 overflow-hidden">
+                <motion.a 
+                  href="https://github.com/rifathasan1970r/Holantower-apps-download/raw/refs/heads/main/HolanTower.apk" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  animate={{ scale: [1, 1.02, 1] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  className="group relative flex items-center justify-center gap-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-8 py-4 rounded-2xl hover:bg-slate-800 dark:hover:bg-slate-100 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
+                >
                   <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <Download size={24} />
                   <span className="font-bold text-lg">এখনই ডাউনলোড করুন</span>
-                </a>
+                </motion.a>
                 <a href="https://holan-tower-apps.vercel.app/" target="_blank" rel="noopener noreferrer" className={`flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all border ${darkMode ? 'border-slate-700 hover:bg-slate-800 text-slate-300' : 'border-slate-200 hover:bg-white text-slate-700'} shadow-sm hover:shadow-md`}>
                   <Globe size={20} />
                   <span>ওয়েব ভার্সন</span>
@@ -799,10 +806,17 @@ export default function App() {
                 </div>
 
                 <div className="mt-10">
-                  <a href="https://github.com/rifathasan1970r/Holantower-apps-download/raw/refs/heads/main/HolanTower.apk" target="_blank" rel="noopener noreferrer" className="w-full py-4 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-lg transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xl flex items-center justify-center gap-3">
+                  <motion.a 
+                    href="https://github.com/rifathasan1970r/Holantower-apps-download/raw/refs/heads/main/HolanTower.apk" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    animate={{ scale: [1, 1.02, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    className="w-full py-4 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-lg transition-all hover:scale-[1.05] active:scale-[0.98] shadow-xl flex items-center justify-center gap-3"
+                  >
                     <Download size={22} />
                     সরাসরি ডাউনলোড করুন
-                  </a>
+                  </motion.a>
                 </div>
               </div>
             </div>
@@ -998,10 +1012,25 @@ export default function App() {
             href="https://github.com/rifathasan1970r/Holantower-apps-download/raw/refs/heads/main/HolanTower.apk"
             target="_blank"
             rel="noopener noreferrer"
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-8 right-8 z-40 bg-emerald-600 text-white p-4 rounded-full shadow-2xl hover:bg-emerald-700 transition-colors hover:scale-110"
+            initial={{ y: 100, opacity: 0, scale: 0.5 }}
+            animate={{ 
+              y: 0, 
+              opacity: 1, 
+              scale: [1, 1.1, 1] 
+            }}
+            exit={{ y: 100, opacity: 0, scale: 0.5 }}
+            transition={{
+              y: { type: "spring", stiffness: 260, damping: 20 },
+              opacity: { duration: 0.2 },
+              scale: {
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }
+            }}
+            whileHover={{ scale: 1.2 }}
+            whileTap={{ scale: 0.9 }}
+            className="fixed bottom-8 right-8 z-40 bg-emerald-600 text-white p-4 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:bg-emerald-700 transition-colors"
           >
             <Download size={24} />
           </motion.a>
