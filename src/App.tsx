@@ -235,7 +235,7 @@ export default function App() {
     return (
       <div className={`relative group/img ${className?.includes('w-full') ? 'w-full' : 'inline-block'} ${className?.includes('h-full') ? 'h-full' : ''}`}>
         <img src={src} alt={alt} className={className} />
-        <div className="absolute bottom-2 right-2 flex flex-col gap-2 opacity-0 group-hover/img:opacity-100 transition-opacity z-40">
+        <div className="absolute bottom-2 right-2 flex flex-col gap-2 z-40">
           <button 
             onClick={(e) => {
               e.preventDefault();
