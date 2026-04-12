@@ -164,18 +164,20 @@ export default function App() {
     if (!isAdminLoggedIn) return <img src={src} alt={alt} className={className} />;
 
     return (
-      <div className="relative group/img">
+      <div className="relative inline-block group/img">
         <img src={src} alt={alt} className={className} />
         <button 
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             const newUrl = prompt('নতুন ইমেজের URL দিন:', src);
             if (newUrl) updateContent(path, newUrl);
           }}
-          className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity rounded-inherit"
+          className="absolute -bottom-3 -right-3 bg-emerald-500 text-white p-2 rounded-xl shadow-2xl hover:bg-emerald-600 transition-all z-40 flex items-center gap-1.5 text-[10px] font-bold border-2 border-white dark:border-slate-900 hover:scale-110 active:scale-95"
+          title="ছবি পরিবর্তন করুন"
         >
-          <div className="bg-white p-2 rounded-full text-slate-900">
-            <ImagePlus size={20} />
-          </div>
+          <ImagePlus size={14} />
+          <span>URL</span>
         </button>
       </div>
     );
