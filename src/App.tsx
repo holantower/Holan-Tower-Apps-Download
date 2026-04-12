@@ -104,7 +104,7 @@ export default function App() {
 
   useEffect(() => {
     async function loadContent() {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://vbhplybsodeyxnwksucw.supabase.co';
       if (!supabaseUrl || !supabaseUrl.startsWith('http')) {
         setIsLoading(false);
         return;
@@ -175,8 +175,8 @@ export default function App() {
   const toggleTheme = () => setDarkMode(!darkMode);
 
   const handleSaveToSupabase = async (silent = false) => {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://vbhplybsodeyxnwksucw.supabase.co';
+    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZiaHBseWJzb2RleXhud2tzdWN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0ODM1NTAsImV4cCI6MjA4NzA1OTU1MH0.cT3bvYfdxxA5QHxD4YYJ7ilUtMCHOsaEww5JqP4yixg';
 
     if (!supabaseUrl || !supabaseKey) {
       if (!silent) alert('Supabase credentials missing! Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Settings > Secrets.');
