@@ -99,7 +99,21 @@ export default function App() {
       updateDate: "২৪ ফেব্রুয়ারি ২০২৬",
       requirement: "Android 8.0+"
     },
-    footerDesc: "আধুনিক আবাসন ব্যবস্থাপনার এক অনন্য উদাহরণ। আমরা নিশ্চিত করি সর্বোচ্চ নিরাপত্তা এবং নাগরিক সুবিধা।"
+    whyTitle: "কেন ব্যবহার করবেন?",
+    whySubtitle: "ডিজিটাল জীবনযাত্রার সুবিধা",
+    whyFeatures: [
+      "সময় বাঁচান এবং ঝামেলা মুক্ত থাকুন",
+      "দ্রুত এবং নিরাপদ বিল পরিশোধ ব্যবস্থা",
+      "রিয়েল-টাইম নোটিশ এবং আপডেট",
+      "সিকিউরড কমিউনিকেশন চ্যানেল",
+      "সম্পূর্ণ ডিজিটাল ম্যানেজমেন্ট সিস্টেম"
+    ],
+    footerDesc: "আধুনিক আবাসন ব্যবস্থাপনার এক অনন্য উদাহরণ। আমরা নিশ্চিত করি সর্বোচ্চ নিরাপত্তা এবং নাগরিক সুবিধা।",
+    fbLink: "https://www.facebook.com/holantower",
+    webLink: "https://holantower.vercel.app/",
+    contactEmail: "holantower@gmail.com",
+    contactPhone: "+8801577-601441",
+    contactAddress: "বাড়ি : #৭৫৫, হলান টাওয়ার, হলান, দক্ষিনখান ঢাকা - ১২৩০"
   });
 
   useEffect(() => {
@@ -696,16 +710,20 @@ export default function App() {
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             {/* Why Choose Us */}
             <div>
-              <span className="text-blue-500 font-bold tracking-wider uppercase text-sm">কেন ব্যবহার করবেন?</span>
-              <h2 className="text-3xl md:text-4xl font-bold mt-3 mb-8">ডিজিটাল জীবনযাত্রার সুবিধা</h2>
+              <span className="text-blue-500 font-bold tracking-wider uppercase text-sm">
+                <EditableText path="whyTitle" value={content.whyTitle || "কেন ব্যবহার করবেন?"} />
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold mt-3 mb-8">
+                <EditableText path="whySubtitle" value={content.whySubtitle || "ডিজিটাল জীবনযাত্রার সুবিধা"} />
+              </h2>
               <div className="space-y-6">
-                {[
+                {(content.whyFeatures || [
                   "সময় বাঁচান এবং ঝামেলা মুক্ত থাকুন",
                   "দ্রুত এবং নিরাপদ বিল পরিশোধ ব্যবস্থা",
                   "রিয়েল-টাইম নোটিশ এবং আপডেট",
                   "সিকিউরড কমিউনিকেশন চ্যানেল",
                   "সম্পূর্ণ ডিজিটাল ম্যানেজমেন্ট সিস্টেম"
-                ].map((item, idx) => (
+                ]).map((item, idx) => (
                   <motion.div 
                     key={idx}
                     initial={{ opacity: 0, x: -20 }}
@@ -717,7 +735,11 @@ export default function App() {
                     <div className="shrink-0 w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
                       <CheckCircle2 size={20} />
                     </div>
-                    <span className="font-semibold text-lg">{item}</span>
+                    <EditableText 
+                      path={`whyFeatures.${idx}`} 
+                      value={item} 
+                      className="font-semibold text-lg" 
+                    />
                   </motion.div>
                 ))}
               </div>
@@ -884,14 +906,23 @@ export default function App() {
                 <EditableText path="footerDesc" value={content.footerDesc} />
               </p>
               <div className="flex gap-4">
-                <a href="#" className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all">
+                <a 
+                  href={content.fbLink || "https://www.facebook.com/holantower"} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all group"
+                  title="Facebook"
+                >
                   <Facebook size={20} />
                 </a>
-                <a href="#" className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all">
-                  <Twitter size={20} />
-                </a>
-                <a href="#" className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all">
-                  <Instagram size={20} />
+                <a 
+                  href={content.webLink || "https://holantower.vercel.app/"} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all group"
+                  title="Website"
+                >
+                  <Globe size={20} />
                 </a>
               </div>
             </div>
@@ -911,15 +942,21 @@ export default function App() {
               <ul className="space-y-4">
                 <li className="flex items-center gap-3">
                   <Mail size={18} className="text-emerald-500" />
-                  <span>support@holantower.com</span>
+                  <span>
+                    <EditableText path="contactEmail" value={content.contactEmail || "holantower@gmail.com"} />
+                  </span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Phone size={18} className="text-emerald-500" />
-                  <span>+৮৮০ ১২৩৪ ৫৬৭৮৯০</span>
+                  <span>
+                    <EditableText path="contactPhone" value={content.contactPhone || "+8801577-601441"} />
+                  </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Building2 size={18} className="text-emerald-500 mt-1" />
-                  <span>হলান টাওয়ার, ঢাকা-১২৩০</span>
+                  <span className="max-w-[200px]">
+                    <EditableText path="contactAddress" value={content.contactAddress || "বাড়ি : #৭৫৫, হলান টাওয়ার, হলান, দক্ষিনখান ঢাকা - ১২৩০"} />
+                  </span>
                 </li>
               </ul>
             </div>
