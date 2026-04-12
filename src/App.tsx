@@ -333,11 +333,11 @@ export default function App() {
       {/* Navigation */}
       <nav className={`fixed w-full z-50 transition-all duration-300 ${darkMode ? 'bg-slate-900/80 border-b border-slate-800' : 'bg-white/80 border-b border-slate-200'} backdrop-blur-xl`}>
         <div className="max-w-7xl mx-auto px-3 sm:px-5 lg:px-6">
-          <div className="flex justify-between items-center h-20">
+          <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-3">
-              <EditableImage path="logoUrl" src={content.logoUrl} alt="Logo" className="w-12 h-12 object-contain" />
+              <EditableImage path="logoUrl" src={content.logoUrl} alt="Logo" className="w-10 h-10 object-contain" />
               <div>
-                <EditableText path="buildingName" value={content.buildingName} className="font-bold text-xl tracking-tight block leading-none" />
+                <EditableText path="buildingName" value={content.buildingName} className="font-bold text-lg tracking-tight block leading-none" />
                 <div className={`flex items-center gap-1 text-xs font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                   <MapPin size={12} />
                   <EditableText path="location" value={content.location} />
@@ -560,7 +560,7 @@ export default function App() {
       <section id="features" className={`py-24 ${darkMode ? 'bg-slate-900/50' : 'bg-white'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-20">
-            <span className="text-emerald-500 font-bold tracking-wider uppercase text-sm">ফিচারসমূহ</span>
+            <span className="bg-red-600 text-white px-6 py-2 rounded-xl font-bold tracking-wider uppercase text-sm inline-block shadow-lg shadow-red-500/20">ফিচারসমূহ</span>
             <h2 className="text-3xl md:text-4xl font-bold mt-3 mb-6">বিল্ডিং ম্যানেজমেন্ট এখন আরও সহজ</h2>
             <p className={`text-lg ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
               হলান টাওয়ার অ্যাপের মাধ্যমে আপনার দৈনন্দিন জীবনের সকল কাজ এখন এক ক্লিকেই সম্ভব।
