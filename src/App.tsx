@@ -174,6 +174,34 @@ export default function App() {
 
   const toggleTheme = () => setDarkMode(!darkMode);
 
+  const handleSaveToSupabase = async (silent = false) => {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      if (!silent) alert('Supabase credentials missing! Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Settings > Secrets.');
+      return false;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('app_content')
+        .upsert({ 
+          id: 'main', 
+          data: content
+        });
+      
+      if (error) throw error;
+      
+      if (!silent) alert('সকল পরিবর্তন সফলভাবে Supabase-এ সেভ করা হয়েছে!');
+      return true;
+    } catch (error: any) {
+      console.error('Save error:', error);
+      if (!silent) alert('সেভ করতে সমস্যা হয়েছে: ' + (error.message || 'Unknown error. Please check if "app_content" table exists in Supabase.'));
+      return false;
+    }
+  };
+
   const handleAdminLogin = (e: FormEvent) => {
     e.preventDefault();
     if (password === '1966') {
@@ -207,19 +235,36 @@ export default function App() {
     return (
       <div className={`relative group/img ${className?.includes('w-full') ? 'w-full' : 'inline-block'} ${className?.includes('h-full') ? 'h-full' : ''}`}>
         <img src={src} alt={alt} className={className} />
-        <button 
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const newUrl = prompt('নতুন ইমেজের URL দিন:', src);
-            if (newUrl) updateContent(path, newUrl);
-          }}
-          className="absolute bottom-2 right-2 bg-emerald-500 text-white p-2 rounded-xl shadow-2xl hover:bg-emerald-600 transition-all z-40 flex items-center gap-1.5 text-[10px] font-bold border-2 border-white dark:border-slate-900 hover:scale-110 active:scale-95"
-          title="ছবি পরিবর্তন করুন"
-        >
-          <ImagePlus size={14} />
-          <span>URL</span>
-        </button>
+        <div className="absolute bottom-2 right-2 flex flex-col gap-2 opacity-0 group-hover/img:opacity-100 transition-opacity z-40">
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              const newUrl = prompt('নতুন ইমেজের URL দিন:', src);
+              if (newUrl) updateContent(path, newUrl);
+            }}
+            className="bg-emerald-500 text-white p-2 rounded-xl shadow-2xl hover:bg-emerald-600 transition-all flex items-center gap-1.5 text-[10px] font-bold border-2 border-white dark:border-slate-900 hover:scale-110 active:scale-95"
+            title="URL পরিবর্তন করুন"
+          >
+            <ImagePlus size={14} />
+            <span>URL</span>
+          </button>
+          <button 
+            onClick={async (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              const success = await handleSaveToSupabase();
+              if (success) {
+                // Optional: visual feedback on the button itself
+              }
+            }}
+            className="bg-blue-600 text-white p-2 rounded-xl shadow-2xl hover:bg-blue-700 transition-all flex items-center gap-1.5 text-[10px] font-bold border-2 border-white dark:border-slate-900 hover:scale-110 active:scale-95"
+            title="সার্ভারে সেভ করুন"
+          >
+            <Save size={14} />
+            <span>SAVE</span>
+          </button>
+        </div>
       </div>
     );
   };
@@ -261,31 +306,10 @@ export default function App() {
               <a href="#faq" className="hover:text-emerald-500 transition-colors font-medium">FAQ</a>
               {isAdminLoggedIn ? (
                 <button 
-                  onClick={async () => {
-                    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-                    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-                    if (!supabaseUrl || !supabaseKey) {
-                      alert('Supabase credentials missing! Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Settings > Secrets.');
-                      return;
-                    }
-
-                    try {
-                      const { error } = await supabase
-                        .from('app_content')
-                        .upsert({ 
-                          id: 'main', 
-                          data: content
-                        });
-                      
-                      if (error) throw error;
-                      
-                      setIsAdminLoggedIn(false);
-                      alert('সকল পরিবর্তন সফলভাবে Supabase-এ সেভ করা হয়েছে!');
-                    } catch (error: any) {
-                      console.error('Save error:', error);
-                      alert('সেভ করতে সমস্যা হয়েছে: ' + (error.message || 'Unknown error. Please check if "app_content" table exists in Supabase.'));
-                    }
+                  onClick={() => {
+                    handleSaveToSupabase().then(success => {
+                      if (success) setIsAdminLoggedIn(false);
+                    });
                   }}
                   className="px-4 py-2 rounded-xl bg-emerald-600 text-white font-medium flex items-center gap-2 hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-500/20"
                 >
