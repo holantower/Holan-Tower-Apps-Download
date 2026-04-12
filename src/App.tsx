@@ -493,8 +493,8 @@ export default function App() {
             >
               {/* Phone Mockup */}
               <div className="relative w-[300px] h-[600px] bg-slate-950 rounded-2xl border-[6px] border-slate-800 shadow-2xl overflow-hidden mx-auto z-10">
-                {/* Centered Punch-hole Camera */}
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 w-3 h-3 bg-slate-900 border border-slate-700 rounded-full z-20"></div>
+                {/* Punch-hole Camera on Right */}
+                <div className="absolute top-4 right-6 w-3 h-3 bg-slate-900 border border-slate-700 rounded-full z-20"></div>
                 <div className="w-full h-full bg-slate-800 relative group">
                   <EditableImage 
                     path="heroImageUrl"
@@ -637,7 +637,9 @@ export default function App() {
             >
                {content.interfaceImages.map((img, idx) => (
                  <div key={idx} className="snap-center shrink-0">
-                   <div className="w-[280px] h-[580px] bg-slate-900 rounded-[3rem] border-[8px] border-slate-800 shadow-2xl overflow-hidden relative group/item transition-transform hover:-translate-y-4 duration-500">
+                   <div className="w-[280px] h-[580px] bg-slate-950 rounded-2xl border-[6px] border-slate-800 shadow-2xl overflow-hidden relative group/item transition-transform hover:-translate-y-4 duration-500">
+                     {/* Punch-hole Camera on Right */}
+                     <div className="absolute top-4 right-6 w-2.5 h-2.5 bg-slate-900 border border-slate-700 rounded-full z-20"></div>
                       {isAdminLoggedIn && (
                         <button 
                           onClick={() => {
@@ -665,7 +667,7 @@ export default function App() {
                      onClick={() => {
                        updateContent('interfaceImages', [...content.interfaceImages, "https://picsum.photos/seed/newui/560/1120"]);
                      }}
-                     className={`w-[280px] h-[580px] rounded-[3rem] border-4 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${darkMode ? 'border-slate-800 hover:border-emerald-500 text-slate-700 hover:text-emerald-500' : 'border-slate-200 hover:border-emerald-500 text-slate-300 hover:text-emerald-500'}`}
+                     className={`w-[280px] h-[580px] rounded-2xl border-4 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${darkMode ? 'border-slate-800 hover:border-emerald-500 text-slate-700 hover:text-emerald-500' : 'border-slate-200 hover:border-emerald-500 text-slate-300 hover:text-emerald-500'}`}
                    >
                      <Plus size={48} />
                      <span className="font-bold text-xl">স্ক্রিনশট যোগ করুন</span>
