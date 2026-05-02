@@ -19,3 +19,21 @@ export const supabase = createClient(
   isValidUrl(supabaseUrl) ? supabaseUrl : 'https://vbhplybsodeyxnwksucw.supabase.co',
   supabaseAnonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZiaHBseWJzb2RleXhud2tzdWN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0ODM1NTAsImV4cCI6MjA4NzA1OTU1MH0.cT3bvYfdxxA5QHxD4YYJ7ilUtMCHOsaEww5JqP4yixg'
 );
+
+export const uploadImage = async (file: File) => {
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+  const filePath = `public/${fileName}`;
+
+  const { data, error } = await supabase.storage
+    .from('app_images')
+    .upload(filePath, file);
+
+  if (error) throw error;
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('app_images')
+    .getPublicUrl(filePath);
+
+  return publicUrl;
+};

@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef, FormEvent, ReactNode } from 'react';
+import { useState, useEffect, useRef, FormEvent, ReactNode, ChangeEvent } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
-import { supabase } from './lib/supabase';
+import { supabase, uploadImage } from './lib/supabase';
 import { 
   Download, 
   Moon, 
@@ -34,7 +34,8 @@ import {
   Plus,
   Trash2,
   ImagePlus,
-  Save
+  Save,
+  Upload
 } from 'lucide-react';
 
 const AnimatedDownloadIcon = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
@@ -195,7 +196,7 @@ export default function App() {
     Calendar: <Calendar className="w-6 h-6" />
   };
 
-  const updateContent = (path: string, value: any) => {
+  const updateContent = (path: string, value: any, autoSave = false) => {
     const keys = path.split('.');
     setContent(prev => {
       const updateRecursive = (current: any, remainingKeys: string[]): any => {
@@ -218,7 +219,13 @@ export default function App() {
           [first]: updateRecursive(current[first], rest)
         };
       };
-      return updateRecursive(prev, keys);
+      
+      const newContent = updateRecursive(prev, keys);
+      if (autoSave) {
+        // Trigger save with the new content immediately
+        handleSaveToSupabase(true, newContent);
+      }
+      return newContent;
     });
   };
 
@@ -240,13 +247,13 @@ export default function App() {
 
   const toggleTheme = () => setDarkMode(!darkMode);
 
-  const handleSaveToSupabase = async (silent = false) => {
+  const handleSaveToSupabase = async (silent = false, dataToSave = contentRef.current) => {
     try {
       const { error } = await supabase
         .from('app_content')
         .upsert({ 
           id: 'main', 
-          data: contentRef.current
+          data: dataToSave
         });
       
       if (error) throw error;
@@ -281,9 +288,7 @@ export default function App() {
         suppressContentEditableWarning
         onBlur={(e) => {
           const newValue = e.currentTarget.textContent || "";
-          updateContent(path, newValue);
-          // Trigger a silent save to ensure data isn't lost on refresh
-          setTimeout(() => handleSaveToSupabase(true), 100);
+          updateContent(path, newValue, true);
         }}
         className={`${className} outline-none focus:ring-2 focus:ring-emerald-500 rounded px-1 transition-all bg-emerald-500/5 min-w-[20px] inline-block`}
       >
@@ -293,24 +298,69 @@ export default function App() {
   };
 
   const EditableImage = ({ path, src, alt, className }: { path: string, src: string, alt: string, className?: string }) => {
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isUploading, setIsUploading] = useState(false);
+
     if (!isAdminLoggedIn) return <img src={src} alt={alt} className={className} />;
+
+    const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      setIsUploading(true);
+      try {
+        const publicUrl = await uploadImage(file);
+        updateContent(path, publicUrl, true);
+        alert('ছবি সফলভাবে আপলোড হয়েছে!');
+      } catch (err: any) {
+        alert('আপলোড ব্যর্থ হয়েছে: ' + err.message);
+      } finally {
+        setIsUploading(false);
+      }
+    };
 
     return (
       <div className={`relative group/img ${className?.includes('w-full') ? 'w-full' : 'inline-block'} ${className?.includes('h-full') ? 'h-full' : ''}`}>
-        <img src={src} alt={alt} className={className} />
+        <img src={src} alt={alt} className={`${className} ${isUploading ? 'opacity-50' : ''}`} />
+        {isUploading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-lg">
+            <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
+        <input 
+          type="file" 
+          ref={fileInputRef} 
+          className="hidden" 
+          accept="image/*" 
+          onChange={handleFileUpload} 
+        />
         <div className="absolute bottom-2 right-2 flex flex-col gap-2 z-40">
           <button 
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               const newUrl = prompt('নতুন ইমেজের URL দিন:', src);
-              if (newUrl) updateContent(path, newUrl);
+              if (newUrl) {
+                updateContent(path, newUrl, true);
+              }
             }}
-            className="bg-emerald-500 text-white p-2 rounded-xl shadow-2xl hover:bg-emerald-600 transition-all flex items-center gap-1.5 text-[10px] font-bold border-2 border-white dark:border-slate-900 hover:scale-110 active:scale-95"
+            className="bg-slate-700 text-white p-2 rounded-xl shadow-2xl hover:bg-slate-800 transition-all flex items-center gap-1.5 text-[10px] font-bold border-2 border-white dark:border-slate-900 hover:scale-110 active:scale-95"
             title="URL পরিবর্তন করুন"
           >
             <ImagePlus size={14} />
             <span>URL</span>
+          </button>
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              fileInputRef.current?.click();
+            }}
+            className="bg-emerald-500 text-white p-2 rounded-xl shadow-2xl hover:bg-emerald-600 transition-all flex items-center gap-1.5 text-[10px] font-bold border-2 border-white dark:border-slate-900 hover:scale-110 active:scale-95"
+            title="ছবি আপলোড করুন"
+          >
+            <Upload size={14} />
+            <span>UPLOAD</span>
           </button>
           <button 
             onClick={async (e) => {
@@ -318,7 +368,7 @@ export default function App() {
               e.stopPropagation();
               const success = await handleSaveToSupabase();
               if (success) {
-                // Optional: visual feedback on the button itself
+                // Optional feedback
               }
             }}
             className="bg-blue-600 text-white p-2 rounded-xl shadow-2xl hover:bg-blue-700 transition-all flex items-center gap-1.5 text-[10px] font-bold border-2 border-white dark:border-slate-900 hover:scale-110 active:scale-95"
@@ -617,8 +667,7 @@ export default function App() {
                     onClick={() => {
                       const newFeatures = [...content.features];
                       newFeatures.splice(idx, 1);
-                      updateContent('features', newFeatures);
-                      setTimeout(() => handleSaveToSupabase(true), 100);
+                      updateContent('features', newFeatures, true);
                     }}
                     className="absolute top-4 right-4 p-2 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
                   >
@@ -639,8 +688,7 @@ export default function App() {
             {isAdminLoggedIn && (
               <button 
                 onClick={() => {
-                  updateContent('features', [...content.features, { icon: "Smartphone", title: "নতুন ফিচার", desc: "ফিচারের বর্ণনা এখানে লিখুন" }]);
-                  setTimeout(() => handleSaveToSupabase(true), 100);
+                  updateContent('features', [...content.features, { icon: "Smartphone", title: "নতুন ফিচার", desc: "ফিচারের বর্ণনা এখানে লিখুন" }], true);
                 }}
                 className={`p-8 rounded-3xl border-2 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${darkMode ? 'border-slate-700 hover:border-emerald-500 text-slate-500 hover:text-emerald-500' : 'border-slate-200 hover:border-emerald-500 text-slate-400 hover:text-emerald-500'}`}
               >
@@ -680,8 +728,7 @@ export default function App() {
                           onClick={() => {
                             const newImgs = [...content.interfaceImages];
                             newImgs.splice(idx, 1);
-                            updateContent('interfaceImages', newImgs);
-                            setTimeout(() => handleSaveToSupabase(true), 100);
+                            updateContent('interfaceImages', newImgs, true);
                           }}
                           className="absolute top-6 right-6 p-2 bg-red-500 text-white rounded-full opacity-0 group-hover/item:opacity-100 transition-opacity z-50 shadow-lg"
                         >
@@ -701,7 +748,7 @@ export default function App() {
                  <div className="snap-center shrink-0">
                    <button 
                      onClick={() => {
-                       updateContent('interfaceImages', [...content.interfaceImages, "https://picsum.photos/seed/newui/560/1120"]);
+                       updateContent('interfaceImages', [...content.interfaceImages, "https://picsum.photos/seed/newui/560/1120"], true);
                      }}
                      className={`w-[280px] h-[580px] rounded-2xl border-4 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${darkMode ? 'border-slate-800 hover:border-emerald-500 text-slate-700 hover:text-emerald-500' : 'border-slate-200 hover:border-emerald-500 text-slate-300 hover:text-emerald-500'}`}
                    >
@@ -773,8 +820,7 @@ export default function App() {
                       onClick={() => {
                         const newSteps = [...content.installSteps];
                         newSteps.splice(idx, 1);
-                        updateContent('installSteps', newSteps);
-                        setTimeout(() => handleSaveToSupabase(true), 100);
+                        updateContent('installSteps', newSteps, true);
                       }}
                       className="absolute top-4 right-4 p-2 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
                     >
@@ -806,8 +852,7 @@ export default function App() {
             {isAdminLoggedIn && (
               <button 
                 onClick={() => {
-                  updateContent('installSteps', [...content.installSteps, { step: "০৫", title: "নতুন ধাপ", desc: "ধাপের বর্ণনা এখানে লিখুন", imageUrl: "https://picsum.photos/seed/newstep/400/300" }]);
-                  setTimeout(() => handleSaveToSupabase(true), 100);
+                  updateContent('installSteps', [...content.installSteps, { step: "০৫", title: "নতুন ধাপ", desc: "ধাপের বর্ণনা এখানে লিখুন", imageUrl: "https://picsum.photos/seed/newstep/400/300" }], true);
                 }}
                 className={`p-8 rounded-3xl border-2 border-dashed flex flex-col items-center justify-center gap-4 transition-all min-h-[300px] ${darkMode ? 'border-slate-700 hover:border-emerald-500 text-slate-500 hover:text-emerald-500' : 'border-slate-200 hover:border-emerald-500 text-slate-400 hover:text-emerald-500'}`}
               >
@@ -949,8 +994,7 @@ export default function App() {
                     onClick={() => {
                       const newFaqs = [...content.faqs];
                       newFaqs.splice(idx, 1);
-                      updateContent('faqs', newFaqs);
-                      setTimeout(() => handleSaveToSupabase(true), 100);
+                      updateContent('faqs', newFaqs, true);
                     }}
                     className="absolute top-6 right-16 p-2 bg-red-500 text-white rounded-full z-10"
                   >
@@ -973,8 +1017,7 @@ export default function App() {
             {isAdminLoggedIn && (
               <button 
                 onClick={() => {
-                  updateContent('faqs', [...content.faqs, { q: "নতুন প্রশ্ন", a: "উত্তর এখানে লিখুন" }]);
-                  setTimeout(() => handleSaveToSupabase(true), 100);
+                  updateContent('faqs', [...content.faqs, { q: "নতুন প্রশ্ন", a: "উত্তর এখানে লিখুন" }], true);
                 }}
                 className={`w-full p-6 rounded-2xl border-2 border-dashed flex items-center justify-center gap-4 transition-all ${darkMode ? 'border-slate-700 hover:border-emerald-500 text-slate-500 hover:text-emerald-500' : 'border-slate-200 hover:border-emerald-500 text-slate-400 hover:text-emerald-500'}`}
               >
