@@ -279,7 +279,12 @@ export default function App() {
       <span 
         contentEditable 
         suppressContentEditableWarning
-        onBlur={(e) => updateContent(path, e.currentTarget.textContent || "")}
+        onBlur={(e) => {
+          const newValue = e.currentTarget.textContent || "";
+          updateContent(path, newValue);
+          // Trigger a silent save to ensure data isn't lost on refresh
+          setTimeout(() => handleSaveToSupabase(true), 100);
+        }}
         className={`${className} outline-none focus:ring-2 focus:ring-emerald-500 rounded px-1 transition-all bg-emerald-500/5 min-w-[20px] inline-block`}
       >
         {value}
@@ -429,16 +434,31 @@ export default function App() {
                 <a href="#screenshots" onClick={() => setIsMenuOpen(false)} className="font-medium py-2 border-b border-slate-100 dark:border-slate-800">স্ক্রিনশট</a>
                 <a href="#install" onClick={() => setIsMenuOpen(false)} className="font-medium py-2 border-b border-slate-100 dark:border-slate-800">ইন্সটল গাইড</a>
                 <a href="#faq" onClick={() => setIsMenuOpen(false)} className="font-medium py-2 border-b border-slate-100 dark:border-slate-800">FAQ</a>
-                <button 
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    setIsAdminModalOpen(true);
-                  }} 
-                  className="font-medium py-2 border-b border-slate-100 dark:border-slate-800 text-left flex items-center gap-2"
-                >
-                  <Lock size={16} />
-                  এডমিন প্যানেল
-                </button>
+                {isAdminLoggedIn ? (
+                  <button 
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      handleSaveToSupabase().then(success => {
+                        if (success) setIsAdminLoggedIn(false);
+                      });
+                    }}
+                    className="font-medium py-3 px-4 rounded-xl bg-emerald-600 text-white flex items-center justify-center gap-2 shadow-lg"
+                  >
+                    <Save size={18} />
+                    সেভ করুন
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      setIsAdminModalOpen(true);
+                    }} 
+                    className="font-medium py-2 border-b border-slate-100 dark:border-slate-800 text-left flex items-center gap-2"
+                  >
+                    <Lock size={16} />
+                    এডমিন প্যানেল
+                  </button>
+                )}
                 <a href="https://github.com/rifathasan1970r/apps-holantower/raw/refs/heads/main/HolanTower%20V5.0.apk" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)} className="text-center px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-blue-600 text-white font-medium shadow-lg flex items-center justify-center gap-2">
                   <Download size={20} />
                   ডাউনলোড করুন
@@ -598,6 +618,7 @@ export default function App() {
                       const newFeatures = [...content.features];
                       newFeatures.splice(idx, 1);
                       updateContent('features', newFeatures);
+                      setTimeout(() => handleSaveToSupabase(true), 100);
                     }}
                     className="absolute top-4 right-4 p-2 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
                   >
@@ -619,6 +640,7 @@ export default function App() {
               <button 
                 onClick={() => {
                   updateContent('features', [...content.features, { icon: "Smartphone", title: "নতুন ফিচার", desc: "ফিচারের বর্ণনা এখানে লিখুন" }]);
+                  setTimeout(() => handleSaveToSupabase(true), 100);
                 }}
                 className={`p-8 rounded-3xl border-2 border-dashed flex flex-col items-center justify-center gap-4 transition-all ${darkMode ? 'border-slate-700 hover:border-emerald-500 text-slate-500 hover:text-emerald-500' : 'border-slate-200 hover:border-emerald-500 text-slate-400 hover:text-emerald-500'}`}
               >
@@ -659,6 +681,7 @@ export default function App() {
                             const newImgs = [...content.interfaceImages];
                             newImgs.splice(idx, 1);
                             updateContent('interfaceImages', newImgs);
+                            setTimeout(() => handleSaveToSupabase(true), 100);
                           }}
                           className="absolute top-6 right-6 p-2 bg-red-500 text-white rounded-full opacity-0 group-hover/item:opacity-100 transition-opacity z-50 shadow-lg"
                         >
@@ -751,6 +774,7 @@ export default function App() {
                         const newSteps = [...content.installSteps];
                         newSteps.splice(idx, 1);
                         updateContent('installSteps', newSteps);
+                        setTimeout(() => handleSaveToSupabase(true), 100);
                       }}
                       className="absolute top-4 right-4 p-2 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
                     >
@@ -783,6 +807,7 @@ export default function App() {
               <button 
                 onClick={() => {
                   updateContent('installSteps', [...content.installSteps, { step: "০৫", title: "নতুন ধাপ", desc: "ধাপের বর্ণনা এখানে লিখুন", imageUrl: "https://picsum.photos/seed/newstep/400/300" }]);
+                  setTimeout(() => handleSaveToSupabase(true), 100);
                 }}
                 className={`p-8 rounded-3xl border-2 border-dashed flex flex-col items-center justify-center gap-4 transition-all min-h-[300px] ${darkMode ? 'border-slate-700 hover:border-emerald-500 text-slate-500 hover:text-emerald-500' : 'border-slate-200 hover:border-emerald-500 text-slate-400 hover:text-emerald-500'}`}
               >
@@ -925,6 +950,7 @@ export default function App() {
                       const newFaqs = [...content.faqs];
                       newFaqs.splice(idx, 1);
                       updateContent('faqs', newFaqs);
+                      setTimeout(() => handleSaveToSupabase(true), 100);
                     }}
                     className="absolute top-6 right-16 p-2 bg-red-500 text-white rounded-full z-10"
                   >
@@ -948,6 +974,7 @@ export default function App() {
               <button 
                 onClick={() => {
                   updateContent('faqs', [...content.faqs, { q: "নতুন প্রশ্ন", a: "উত্তর এখানে লিখুন" }]);
+                  setTimeout(() => handleSaveToSupabase(true), 100);
                 }}
                 className={`w-full p-6 rounded-2xl border-2 border-dashed flex items-center justify-center gap-4 transition-all ${darkMode ? 'border-slate-700 hover:border-emerald-500 text-slate-500 hover:text-emerald-500' : 'border-slate-200 hover:border-emerald-500 text-slate-400 hover:text-emerald-500'}`}
               >
@@ -1086,6 +1113,24 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Floating Save Button for Admin */}
+      <AnimatePresence>
+        {isAdminLoggedIn && (
+          <motion.button
+            initial={{ scale: 0, opacity: 0, y: 100 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0, opacity: 0, y: 100 }}
+            onClick={() => handleSaveToSupabase()}
+            className="fixed bottom-24 right-8 z-[60] bg-emerald-600 text-white p-4 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:bg-emerald-700 transition-all flex items-center gap-2 group overflow-hidden"
+          >
+            <Save size={24} />
+            <span className="max-w-0 group-hover:max-w-[200px] transition-all duration-500 overflow-hidden whitespace-nowrap font-bold">
+              পরিবর্তনগুলো সেভ করুন
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Floating Download Button */}
       <AnimatePresence>
