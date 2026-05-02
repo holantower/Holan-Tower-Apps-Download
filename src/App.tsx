@@ -105,7 +105,7 @@ export default function App() {
     installSteps: [
       { step: "০১", title: "ডাউনলোড বাটনে ক্লিক করুন", desc: "নিচের ডাউনলোড বাটনে ক্লিক করে অ্যাপটি ডাউনলোড শুরু করুন", imageUrl: "https://picsum.photos/seed/step0/400/300" },
       { step: "০২", title: "ফাইল ওপেন করে Install চাপুন", desc: "ডাউনলোড শেষ হলে নোটিফিকেশন বার থেকে ফাইলটি ওপেন করুন", imageUrl: "https://picsum.photos/seed/step1/400/300" },
-      { step: "০৩", title: "Unknown Sources Allow করুন", desc: "যদি পারমিশন চায়, তবে সেটিংস থেকে 'Allow' করে দিন", imageUrl: "https://picsum.photos/seed/step2/400/300" },
+      { step: "০৩", title: "Unknown Sources Allow করুন", desc: "যদি পারমিশন চায়, তবে সেটিিংস থেকে 'Allow' করে দিন", imageUrl: "https://picsum.photos/seed/step2/400/300" },
       { step: "০৪", title: "অ্যাপ ওপেন করে লগইন করুন", desc: "আপনার ফ্ল্যাট নম্বর দিয়ে রেজিস্ট্রেশন সম্পন্ন করুন", imageUrl: "https://picsum.photos/seed/step3/400/300" }
     ],
     installTitle: "ইন্সটলেশন গাইড",
@@ -148,6 +148,11 @@ export default function App() {
     contactAddress: "বাড়ি : #৭৫৫, হলান টাওয়ার, হলান, দক্ষিনখান ঢাকা - ১২৩০",
     mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d912.112!2d90.4152!3d23.8735!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c5d0f1a8c5b1%3A0x4a4a4a4a4a4a4a4a!2sHolan%20Tower!5e1!3m2!1sen!2sbd!4v1712880000000!5m2!1sen!2sbd"
   });
+
+  const contentRef = useRef(content);
+  useEffect(() => {
+    contentRef.current = content;
+  }, [content]);
 
   useEffect(() => {
     async function loadContent() {
@@ -193,13 +198,27 @@ export default function App() {
   const updateContent = (path: string, value: any) => {
     const keys = path.split('.');
     setContent(prev => {
-      const newContent = { ...prev };
-      let current: any = newContent;
-      for (let i = 0; i < keys.length - 1; i++) {
-        current = current[keys[i]];
-      }
-      current[keys[keys.length - 1]] = value;
-      return newContent;
+      const updateRecursive = (current: any, remainingKeys: string[]): any => {
+        const [first, ...rest] = remainingKeys;
+        if (remainingKeys.length === 1) {
+          if (Array.isArray(current)) {
+            const newArr = [...current];
+            newArr[parseInt(first)] = value;
+            return newArr;
+          }
+          return { ...current, [first]: value };
+        }
+        if (Array.isArray(current)) {
+          const newArr = [...current];
+          newArr[parseInt(first)] = updateRecursive(current[parseInt(first)], rest);
+          return newArr;
+        }
+        return {
+          ...current,
+          [first]: updateRecursive(current[first], rest)
+        };
+      };
+      return updateRecursive(prev, keys);
     });
   };
 
@@ -222,20 +241,12 @@ export default function App() {
   const toggleTheme = () => setDarkMode(!darkMode);
 
   const handleSaveToSupabase = async (silent = false) => {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://vbhplybsodeyxnwksucw.supabase.co';
-    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZiaHBseWJzb2RleXhud2tzdWN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0ODM1NTAsImV4cCI6MjA4NzA1OTU1MH0.cT3bvYfdxxA5QHxD4YYJ7ilUtMCHOsaEww5JqP4yixg';
-
-    if (!supabaseUrl || !supabaseKey) {
-      if (!silent) alert('Supabase credentials missing! Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Settings > Secrets.');
-      return false;
-    }
-
     try {
       const { error } = await supabase
         .from('app_content')
         .upsert({ 
           id: 'main', 
-          data: content
+          data: contentRef.current
         });
       
       if (error) throw error;
