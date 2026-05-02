@@ -26,13 +26,18 @@ export const uploadImage = async (file: File) => {
   const filePath = `public/${fileName}`;
 
   const { data, error } = await supabase.storage
-    .from('app_images')
+    .from('images')
     .upload(filePath, file);
 
-  if (error) throw error;
+  if (error) {
+    if (error.message.includes('bucket not found') || error.message.includes('Bucket not found')) {
+      throw new Error('Supabase Storage-এ "images" নামে একটি Public Bucket তৈরি করুন।');
+    }
+    throw error;
+  }
 
   const { data: { publicUrl } } = supabase.storage
-    .from('app_images')
+    .from('images')
     .getPublicUrl(filePath);
 
   return publicUrl;
