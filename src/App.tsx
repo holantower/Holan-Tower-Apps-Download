@@ -837,7 +837,7 @@ export default function App() {
                     <p className={`text-sm mb-6 ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                       <EditableText path={`installSteps.${idx}.desc`} value={item.desc} />
                     </p>
-                    <div className={`w-full h-32 rounded-xl overflow-hidden ${darkMode ? 'bg-slate-900' : 'bg-slate-200'}`}>
+                    <div className={`w-full h-32 rounded-xl overflow-hidden border-2 ${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-200 border-slate-300'}`}>
                        <EditableImage 
                          path={`installSteps.${idx}.imageUrl`} 
                          src={item.imageUrl || `https://picsum.photos/seed/step${idx}/400/300`} 
